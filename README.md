@@ -1,4 +1,6 @@
-direct-api
+#TopCoder Direct API
 ==========
 
-APIs for challenge management.
+APIs for managing challenges.
+
+##**OVERVIEW**
