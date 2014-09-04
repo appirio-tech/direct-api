@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xmlns:mvc="http://www.springframework.org/schema/mvc"
+       xmlns:aop="http://www.springframework.org/schema/aop"
+       xmlns:tx="http://www.springframework.org/schema/tx"
+       xmlns:jee="http://www.springframework.org/schema/jee"
+       xmlns:security="http://www.springframework.org/schema/security"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+        http://www.springframework.org/schema/beans/spring-beans.xsd
+        http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd
+        http://www.springframework.org/schema/mvc http://www.springframework.org/schema/mvc/spring-mvc.xsd
+        http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop.xsd
+        http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx.xsd
+        http://www.springframework.org/schema/security http://www.springframework.org/schema/security/spring-security.xsd
+        http://www.springframework.org/schema/jee http://www.springframework.org/schema/jee/spring-jee.xsd">
+
+    <mvc:annotation-driven>
+        <mvc:message-converters register-defaults="true">
+            <bean class="com.appirio.tech.core.api.v2.controller.ApiHttpMessageConverter"/>
+        </mvc:message-converters>
+    </mvc:annotation-driven>
+
+    <context:annotation-config />
+    <aop:aspectj-autoproxy/>
+    <aop:config proxy-target-class="true" expose-proxy="true"/>
+    
+    <context:component-scan base-package="com.appirio.tech"/>
+    <context:component-scan base-package="com.topcoder.direct"/>
+    
+    <context:property-placeholder ignore-unresolvable="true" location="classpath:app.properties" />
+
+    <jee:jndi-lookup id="tcsCatalogDS" jndi-name="java:comp/env/jdbc/tcsCatalog" resource-ref="true"/>
+    <jee:jndi-lookup id="commonOltpDS" jndi-name="java:comp/env/jdbc/commonOltp" resource-ref="true"/>
+
+    <bean id="txManager" class="org.springframework.transaction.jta.JtaTransactionManager">
+        <property name="transactionSynchronizationRegistryName" value="java:comp/env/TransactionSynchronizationRegistry"/>
+        <property name="transactionManagerName" value="java:comp/UserTransaction"/>
+    </bean>
+
+    <tx:advice id="txAdvice" transaction-manager="txManager">
+        <tx:attributes>
+            <tx:method name="*"/>
+        </tx:attributes>
+    </tx:advice>
+
+    <bean id="tcsCatalogJdbc" class="org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate">
+        <constructor-arg type="javax.sql.DataSource" ref="tcsCatalogDS"/>
+    </bean>
+    <bean id="commonOltpJdbc" class="org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate">
+        <constructor-arg type="javax.sql.DataSource" ref="commonOltpDS"/>
+    </bean>
+
+</beans>

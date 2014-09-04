@@ -1,0 +1,109 @@
+SELECT
+SKIP :first_row_index
+FIRST :page_size
+  p.project_id AS challenge_id
+, p.tc_direct_project_id AS direct_project_id
+, (SELECT name FROM tc_direct_project tdp WHERE tdp.project_id = p.tc_direct_project_id) AS direct_project_name
+, pn.value AS challenge_name
+, pcl.name AS challenge_type
+, technology_list(pi1.value) AS challenge_technologies
+, platform_list(p.project_id) as challenge_platforms
+, NVL(reg_phase.actual_start_time, reg_phase.scheduled_start_time) AS challenge_start_date
+, CASE WHEN pi_dr.value = 'On' THEN
+  (SELECT pi_dr.value::decimal FROM project_info pi_dr WHERE pi_dr.project_info_type_id = 30 AND pi_dr.project_id = p.project_id)
+  ELSE 0 END AS dr_points
+, (SELECT NVL(MAX(actual_end_time), MAX(scheduled_end_time)) FROM project_phase pp where pp.project_id = p.project_id) AS challenge_end_date
+, client_billing_info.billing_name
+, client_billing_info.billing_id
+, client_billing_info.client_id
+, client_billing_info.client_name
+, CASE WHEN rel_flag.value = 'true' THEN rel_cost.value::decimal ELSE NULL END AS reliability_bonus
+, psl.name as challenge_status
+FROM project p
+INNER JOIN project_info pn ON pn.project_id = p.project_id AND pn.project_info_type_id = 6
+INNER JOIN project_info pi1 ON pi1.project_id = p.project_id AND pi1.project_info_type_id = 1
+LEFT JOIN project_info rel_flag ON rel_flag.project_id = p.project_id AND rel_flag.project_info_type_id = 45
+LEFT JOIN project_info rel_cost ON rel_cost.project_id = p.project_id AND rel_cost.project_info_type_id = 38
+LEFT JOIN project_info pi32 ON pi32.project_id = p.project_id AND pi32.project_info_type_id = 32
+INNER JOIN project_category_lu pcl ON pcl.project_category_id = p.project_category_id
+INNER JOIN project_status_lu psl ON psl.project_status_id = p.project_status_id
+INNER JOIN project_phase reg_phase ON reg_phase.project_id = p.project_id AND reg_phase.phase_type_id = 1
+LEFT JOIN project_info pi_dr ON pi_dr.project_id = p.project_id AND pi_dr.project_info_type_id = 26
+LEFT JOIN (
+  SELECT
+    billing.name AS billing_name
+  , billing.project_id AS billing_id
+  , c.client_id
+  , c.name AS client_name
+  FROM time_oltp\:project billing
+  INNER JOIN time_oltp\:client_project cp ON cp.project_id = billing.project_id
+  INNER JOIN time_oltp\:client c ON c.client_id = cp.client_id
+) AS client_billing_info ON client_billing_info.billing_id = NVL(
+      (CASE WHEN pi32.value > 0 THEN pi32.value::INTEGER -- get billing account id from project_info
+           WHEN p.tc_direct_project_id IS NOT NULL THEN (SELECT MIN(billing_account_id) FROM direct_project_account dpa WHERE dpa.project_id = p.tc_direct_project_id) -- get billing account id from direct_project_account
+           ELSE 0 -- There is no billing account for this challenge.
+      END),0)
+WHERE
+(
+    (p.create_user = :user_id)
+    OR
+    (EXISTS (
+        SELECT
+            1
+         FROM
+            user_permission_grant as axcheck_upg
+         WHERE
+            resource_id = p.tc_direct_project_id
+            AND permission_type_id in (1,2,3)
+            AND axcheck_upg.user_id = :user_id
+     ) OR EXISTS (
+        SELECT
+            1
+        FROM
+            group_associated_direct_projects axcheck_gadp
+        INNER JOIN customer_group axcheck_sg ON axcheck_sg.group_id = axcheck_gadp.group_id
+        INNER JOIN group_member axcheck_gm ON axcheck_gm.group_id = axcheck_sg.group_id
+        WHERE
+            axcheck_gm.user_id = :user_id
+            AND axcheck_gm.active = 1
+            AND axcheck_sg.archived = 0
+            AND axcheck_gadp.tc_direct_project_id = p.tc_direct_project_id
+    ) OR EXISTS (
+        SELECT
+            1
+        FROM
+            corporate_oltp\:direct_project_account axcheck_dpa
+        INNER JOIN group_associated_billing_accounts axcheck_gaba ON axcheck_gaba.billing_account_id = axcheck_dpa.billing_account_id
+        INNER JOIN customer_group axcheck_sg ON axcheck_sg.group_id = axcheck_gaba.group_id
+        INNER JOIN group_member axcheck_gm ON axcheck_gm.group_id = axcheck_sg.group_id
+        WHERE
+            axcheck_gm.user_id = :user_id
+            AND axcheck_gm.active = 1
+            AND axcheck_sg.archived = 0
+            AND axcheck_dpa.project_id = p.tc_direct_project_id
+    ) OR EXISTS (
+        SELECT
+            1
+        FROM
+            corporate_oltp\:direct_project_account axcheck_dpa
+        INNER JOIN tt_project axcheck_ttp ON axcheck_dpa.billing_account_id = axcheck_ttp.project_id
+        INNER JOIN tt_client_project axcheck_ttcp ON axcheck_ttp.project_id = axcheck_ttcp.project_id
+        INNER JOIN tt_client axcheck_ttc ON axcheck_ttcp.client_id = axcheck_ttc.client_id
+        INNER JOIN customer_group axcheck_sg ON axcheck_sg.client_id = axcheck_ttc.client_id
+        INNER JOIN group_member axcheck_gm ON axcheck_sg.group_id = axcheck_gm.group_id
+        WHERE
+            axcheck_sg.auto_grant = 1
+            AND axcheck_gm.active = 1
+            AND axcheck_gm.unassigned_on is null
+            AND axcheck_sg.archived = 0
+            AND axcheck_dpa.project_id = p.tc_direct_project_id
+            AND axcheck_ttc.client_status_id = 1
+            AND (
+                (axcheck_gm.use_group_default=0 and axcheck_gm.specific_permission!='REPORT')
+                OR
+                (axcheck_gm.use_group_default=1 and axcheck_sg.default_permission != 'REPORT')
+            )
+            AND   axcheck_gm.user_id = :user_id
+       )
+    )
+)

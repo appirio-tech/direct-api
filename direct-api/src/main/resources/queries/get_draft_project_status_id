@@ -1,0 +1,1 @@
+SELECT psl.project_status_id AS challenge_status_id FROM project_status_lu psl WHERE project_status_id >= 3

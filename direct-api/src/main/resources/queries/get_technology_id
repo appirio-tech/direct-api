@@ -1,0 +1,5 @@
+SELECT
+  DISTINCT technology_type_id AS technology_id
+FROM  technology_types tt
+WHERE status_id = 1
+AND LOWER(tt.technology_name) IN (:technologies)

@@ -1,0 +1,41 @@
+{
+  "id" : "375d5da9:1483af80904:-7ff0",
+  "result" : {
+    "success" : true,
+    "status" : 200,
+    "content" : [ {
+      "accountId" : null,
+      "id" : "40005619",
+      "challengeName" : "Client 40005501 Billing Account 2 Project 6 RIA Build Contest 119",
+      "challengeType" : "RIA Build",
+      "clientName" : "Client 40005501",
+      "clientId" : 40005501,
+      "billingName" : "Client 40005501 Billing Account 2",
+      "billingId" : 40005502,
+      "directProjectName" : "Client 40005501 Billing Account 2 Project 6",
+      "directProjectId" : 40005512,
+      "challengeTechnologies" : [ "Servlet" ],
+      "challengePlatforms" : [ "Heroku", "NodeJS" ],
+      "challengeStartDate" : "08/01/2014 20:00",
+      "challengeEndDate" : "08/20/2014 20:00",
+      "memberPrize" : {
+        "prizes" : [ {
+          "id" : "40005843"
+        }, {
+          "id" : "40005844"
+        } ],
+        "checkPointPrizes" : [ {
+          "id" : "40005845"
+        } ],
+        "totalPrize" : 1560.0,
+        "drPoints" : 450.0,
+        "reliabilityBonus" : 300.0
+      },
+      "drPoints" : 450.0,
+      "reviewCost" : null,
+      "challengeFee" : null,
+      "challengeStatus" : "Cancelled - Client Request"
+    } ]
+  },
+  "version" : "v2"
+}

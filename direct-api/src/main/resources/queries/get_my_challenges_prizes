@@ -1,0 +1,78 @@
+SELECT
+  pr.place AS placement
+, pr.prize_amount
+, pr.project_id AS challenge_id
+, pr.prize_type_id AS prize_type
+, pr.number_of_submissions AS number_of_prize
+, pr.prize_id
+FROM prize pr
+INNER JOIN project p ON p.project_id = pr.project_id
+INNER JOIN project_info pn ON pn.project_id = p.project_id AND pn.project_info_type_id = 6
+INNER JOIN project_info pi1 ON pi1.project_id = p.project_id AND pi1.project_info_type_id = 1
+INNER JOIN project_category_lu pcl ON pcl.project_category_id = p.project_category_id
+INNER JOIN project_status_lu psl ON psl.project_status_id = p.project_status_id
+INNER JOIN project_phase reg_phase ON reg_phase.project_id = p.project_id AND reg_phase.phase_type_id = 1
+WHERE
+(
+    (p.create_user = :user_id)
+    OR
+    (EXISTS (
+        SELECT
+            1
+         FROM
+            user_permission_grant as axcheck_upg
+         WHERE
+            resource_id = p.tc_direct_project_id
+            AND permission_type_id in (1,2,3)
+            AND axcheck_upg.user_id = :user_id
+     ) OR EXISTS (
+        SELECT
+            1
+        FROM
+            group_associated_direct_projects axcheck_gadp
+        INNER JOIN customer_group axcheck_sg ON axcheck_sg.group_id = axcheck_gadp.group_id
+        INNER JOIN group_member axcheck_gm ON axcheck_gm.group_id = axcheck_sg.group_id
+        WHERE
+            axcheck_gm.user_id = :user_id
+            AND axcheck_gm.active = 1
+            AND axcheck_sg.archived = 0
+            AND axcheck_gadp.tc_direct_project_id = p.tc_direct_project_id
+    ) OR EXISTS (
+        SELECT
+            1
+        FROM
+            corporate_oltp\:direct_project_account axcheck_dpa
+        INNER JOIN group_associated_billing_accounts axcheck_gaba ON axcheck_gaba.billing_account_id = axcheck_dpa.billing_account_id
+        INNER JOIN customer_group axcheck_sg ON axcheck_sg.group_id = axcheck_gaba.group_id
+        INNER JOIN group_member axcheck_gm ON axcheck_gm.group_id = axcheck_sg.group_id
+        WHERE
+            axcheck_gm.user_id = :user_id
+            AND axcheck_gm.active = 1
+            AND axcheck_sg.archived = 0
+            AND axcheck_dpa.project_id = p.tc_direct_project_id
+    ) OR EXISTS (
+        SELECT
+            1
+        FROM
+            corporate_oltp\:direct_project_account axcheck_dpa
+        INNER JOIN tt_project axcheck_ttp ON axcheck_dpa.billing_account_id = axcheck_ttp.project_id
+        INNER JOIN tt_client_project axcheck_ttcp ON axcheck_ttp.project_id = axcheck_ttcp.project_id
+        INNER JOIN tt_client axcheck_ttc ON axcheck_ttcp.client_id = axcheck_ttc.client_id
+        INNER JOIN customer_group axcheck_sg ON axcheck_sg.client_id = axcheck_ttc.client_id
+        INNER JOIN group_member axcheck_gm ON axcheck_sg.group_id = axcheck_gm.group_id
+        WHERE
+            axcheck_sg.auto_grant = 1
+            AND axcheck_gm.active = 1
+            AND axcheck_gm.unassigned_on is null
+            AND axcheck_sg.archived = 0
+            AND axcheck_dpa.project_id = p.tc_direct_project_id
+            AND axcheck_ttc.client_status_id = 1
+            AND (
+                (axcheck_gm.use_group_default=0 and axcheck_gm.specific_permission!='REPORT')
+                OR
+                (axcheck_gm.use_group_default=1 and axcheck_sg.default_permission != 'REPORT')
+            )
+            AND   axcheck_gm.user_id = :user_id
+       )
+    )
+)

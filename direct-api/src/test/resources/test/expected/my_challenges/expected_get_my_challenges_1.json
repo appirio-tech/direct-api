@@ -1,0 +1,323 @@
+{
+  "id" : "375d5da9:1483af80904:-7fff",
+  "result" : {
+    "success" : true,
+    "status" : 200,
+    "content" : [ {
+      "accountId" : null,
+      "id" : "40005740",
+      "challengeName" : "Client 40005502 Billing Account 2 Project 6 Assembly Competition Contest 240",
+      "challengeType" : "Assembly Competition",
+      "clientName" : "Client 40005502",
+      "clientId" : 40005502,
+      "billingName" : "Client 40005502 Billing Account 2",
+      "billingId" : 40005504,
+      "directProjectName" : "Client 40005502 Billing Account 2 Project 6",
+      "directProjectId" : 40005524,
+      "challengeTechnologies" : [ ".NET 3.5", "C#", "HTTP", "MySQL", "VB.NET" ],
+      "challengePlatforms" : [ ],
+      "challengeStartDate" : "08/01/2014 20:00",
+      "challengeEndDate" : "08/20/2014 20:00",
+      "memberPrize" : {
+        "prizes" : [ {
+          "id" : "40006194"
+        }, {
+          "id" : "40006195"
+        } ],
+        "checkPointPrizes" : [ ],
+        "totalPrize" : 1200.0,
+        "drPoints" : 360.0,
+        "reliabilityBonus" : 240.0
+      },
+      "drPoints" : 360.0,
+      "reviewCost" : null,
+      "challengeFee" : null,
+      "challengeStatus" : "Cancelled - Requirements Infeasible"
+    }, {
+      "accountId" : null,
+      "id" : "40005739",
+      "challengeName" : "Client 40005502 Billing Account 2 Project 6 Print/Presentation Contest 239",
+      "challengeType" : "Print/Presentation",
+      "clientName" : "Client 40005502",
+      "clientId" : 40005502,
+      "billingName" : "Client 40005502 Billing Account 2",
+      "billingId" : 40005504,
+      "directProjectName" : "Client 40005502 Billing Account 2 Project 6",
+      "directProjectId" : 40005524,
+      "challengeTechnologies" : [ ],
+      "challengePlatforms" : [ ],
+      "challengeStartDate" : "08/01/2014 20:00",
+      "challengeEndDate" : "08/20/2014 20:00",
+      "memberPrize" : {
+        "prizes" : [ {
+          "id" : "40006191"
+        }, {
+          "id" : "40006192"
+        } ],
+        "checkPointPrizes" : [ {
+          "id" : "40006193"
+        } ],
+        "totalPrize" : 3465.0,
+        "drPoints" : 510.0,
+        "reliabilityBonus" : null
+      },
+      "drPoints" : 510.0,
+      "reviewCost" : null,
+      "challengeFee" : null,
+      "challengeStatus" : "Draft"
+    }, {
+      "accountId" : null,
+      "id" : "40005738",
+      "challengeName" : "Client 40005502 Billing Account 2 Project 6 Idea Generation Contest 238",
+      "challengeType" : "Idea Generation",
+      "clientName" : "Client 40005502",
+      "clientId" : 40005502,
+      "billingName" : "Client 40005502 Billing Account 2",
+      "billingId" : 40005504,
+      "directProjectName" : "Client 40005502 Billing Account 2 Project 6",
+      "directProjectId" : 40005524,
+      "challengeTechnologies" : [ ],
+      "challengePlatforms" : [ ],
+      "challengeStartDate" : "08/01/2014 20:00",
+      "challengeEndDate" : "08/20/2014 20:00",
+      "memberPrize" : {
+        "prizes" : [ {
+          "id" : "40006188"
+        }, {
+          "id" : "40006189"
+        }, {
+          "id" : "40006190"
+        } ],
+        "checkPointPrizes" : [ ],
+        "totalPrize" : 4200.0,
+        "drPoints" : 510.0,
+        "reliabilityBonus" : null
+      },
+      "drPoints" : 510.0,
+      "reviewCost" : null,
+      "challengeFee" : null,
+      "challengeStatus" : "Cancelled - Zero Submissions"
+    }, {
+      "accountId" : null,
+      "id" : "40005737",
+      "challengeName" : "Client 40005502 Billing Account 2 Project 6 Content Creation Contest 237",
+      "challengeType" : "Content Creation",
+      "clientName" : "Client 40005502",
+      "clientId" : 40005502,
+      "billingName" : "Client 40005502 Billing Account 2",
+      "billingId" : 40005504,
+      "directProjectName" : "Client 40005502 Billing Account 2 Project 6",
+      "directProjectId" : 40005524,
+      "challengeTechnologies" : [ ],
+      "challengePlatforms" : [ ],
+      "challengeStartDate" : "08/01/2014 20:00",
+      "challengeEndDate" : "08/20/2014 20:00",
+      "memberPrize" : {
+        "prizes" : [ {
+          "id" : "40006186"
+        }, {
+          "id" : "40006187"
+        } ],
+        "checkPointPrizes" : [ ],
+        "totalPrize" : 1500.0,
+        "drPoints" : 450.0,
+        "reliabilityBonus" : 300.0
+      },
+      "drPoints" : 450.0,
+      "reviewCost" : null,
+      "challengeFee" : null,
+      "challengeStatus" : "Cancelled - Zero Registrations"
+    }, {
+      "accountId" : null,
+      "id" : "40005736",
+      "challengeName" : "Client 40005502 Billing Account 2 Project 6 Web Design Contest 236",
+      "challengeType" : "Web Design",
+      "clientName" : "Client 40005502",
+      "clientId" : 40005502,
+      "billingName" : "Client 40005502 Billing Account 2",
+      "billingId" : 40005504,
+      "directProjectName" : "Client 40005502 Billing Account 2 Project 6",
+      "directProjectId" : 40005524,
+      "challengeTechnologies" : [ ],
+      "challengePlatforms" : [ ],
+      "challengeStartDate" : "08/01/2014 20:00",
+      "challengeEndDate" : "08/20/2014 20:00",
+      "memberPrize" : {
+        "prizes" : [ {
+          "id" : "40006182"
+        }, {
+          "id" : "40006183"
+        }, {
+          "id" : "40006184"
+        }, {
+          "id" : "40006185"
+        } ],
+        "checkPointPrizes" : [ ],
+        "totalPrize" : 5000.0,
+        "drPoints" : 510.0,
+        "reliabilityBonus" : null
+      },
+      "drPoints" : 510.0,
+      "reviewCost" : null,
+      "challengeFee" : null,
+      "challengeStatus" : "Active"
+    }, {
+      "accountId" : null,
+      "id" : "40005735",
+      "challengeName" : "Client 40005502 Billing Account 2 Project 6 Test Scenarios Contest 235",
+      "challengeType" : "Test Scenarios",
+      "clientName" : "Client 40005502",
+      "clientId" : 40005502,
+      "billingName" : "Client 40005502 Billing Account 2",
+      "billingId" : 40005504,
+      "directProjectName" : "Client 40005502 Billing Account 2 Project 6",
+      "directProjectId" : 40005524,
+      "challengeTechnologies" : [ "XUL" ],
+      "challengePlatforms" : [ ],
+      "challengeStartDate" : "08/01/2014 20:00",
+      "challengeEndDate" : "08/20/2014 20:00",
+      "memberPrize" : {
+        "prizes" : [ {
+          "id" : "40006179"
+        }, {
+          "id" : "40006180"
+        } ],
+        "checkPointPrizes" : [ {
+          "id" : "40006181"
+        } ],
+        "totalPrize" : 1770.0,
+        "drPoints" : 450.0,
+        "reliabilityBonus" : 300.0
+      },
+      "drPoints" : 450.0,
+      "reviewCost" : null,
+      "challengeFee" : null,
+      "challengeStatus" : "Completed"
+    }, {
+      "accountId" : null,
+      "id" : "40005734",
+      "challengeName" : "Client 40005502 Billing Account 2 Project 6 Wireframes Contest 234",
+      "challengeType" : "Wireframes",
+      "clientName" : "Client 40005502",
+      "clientId" : 40005502,
+      "billingName" : "Client 40005502 Billing Account 2",
+      "billingId" : 40005504,
+      "directProjectName" : "Client 40005502 Billing Account 2 Project 6",
+      "directProjectId" : 40005524,
+      "challengeTechnologies" : [ ],
+      "challengePlatforms" : [ ],
+      "challengeStartDate" : "08/01/2014 20:00",
+      "challengeEndDate" : "08/20/2014 20:00",
+      "memberPrize" : {
+        "prizes" : [ {
+          "id" : "40006175"
+        }, {
+          "id" : "40006176"
+        }, {
+          "id" : "40006177"
+        }, {
+          "id" : "40006178"
+        } ],
+        "checkPointPrizes" : [ ],
+        "totalPrize" : 5000.0,
+        "drPoints" : 510.0,
+        "reliabilityBonus" : null
+      },
+      "drPoints" : 510.0,
+      "reviewCost" : null,
+      "challengeFee" : null,
+      "challengeStatus" : "Completed"
+    }, {
+      "accountId" : null,
+      "id" : "40005733",
+      "challengeName" : "Client 40005502 Billing Account 2 Project 6 Development Contest 233",
+      "challengeType" : "Development",
+      "clientName" : "Client 40005502",
+      "clientId" : 40005502,
+      "billingName" : "Client 40005502 Billing Account 2",
+      "billingId" : 40005504,
+      "directProjectName" : "Client 40005502 Billing Account 2 Project 6",
+      "directProjectId" : 40005524,
+      "challengeTechnologies" : [ ".NET", "COM" ],
+      "challengePlatforms" : [ ],
+      "challengeStartDate" : "08/01/2014 20:00",
+      "challengeEndDate" : "08/20/2014 20:00",
+      "memberPrize" : {
+        "prizes" : [ {
+          "id" : "40006173"
+        }, {
+          "id" : "40006174"
+        } ],
+        "checkPointPrizes" : [ ],
+        "totalPrize" : 1200.0,
+        "drPoints" : 360.0,
+        "reliabilityBonus" : 240.0
+      },
+      "drPoints" : 360.0,
+      "reviewCost" : null,
+      "challengeFee" : null,
+      "challengeStatus" : "Completed"
+    }, {
+      "accountId" : null,
+      "id" : "40005732",
+      "challengeName" : "Client 40005502 Billing Account 2 Project 6 Test Suites Contest 232",
+      "challengeType" : "Test Suites",
+      "clientName" : "Client 40005502",
+      "clientId" : 40005502,
+      "billingName" : "Client 40005502 Billing Account 2",
+      "billingId" : 40005504,
+      "directProjectName" : "Client 40005502 Billing Account 2 Project 6",
+      "directProjectId" : 40005524,
+      "challengeTechnologies" : [ "Flex", "JMS", "SQL Server 2005", "Windows Communication Foundation" ],
+      "challengePlatforms" : [ ],
+      "challengeStartDate" : "08/01/2014 20:00",
+      "challengeEndDate" : "08/20/2014 20:00",
+      "memberPrize" : {
+        "prizes" : [ {
+          "id" : "40006171"
+        }, {
+          "id" : "40006172"
+        } ],
+        "checkPointPrizes" : [ ],
+        "totalPrize" : 1200.0,
+        "drPoints" : 360.0,
+        "reliabilityBonus" : 240.0
+      },
+      "drPoints" : 360.0,
+      "reviewCost" : null,
+      "challengeFee" : null,
+      "challengeStatus" : "Completed"
+    }, {
+      "accountId" : null,
+      "id" : "40005731",
+      "challengeName" : "Client 40005502 Billing Account 2 Project 6 Copilot Posting Contest 231",
+      "challengeType" : "Copilot Posting",
+      "clientName" : "Client 40005502",
+      "clientId" : 40005502,
+      "billingName" : "Client 40005502 Billing Account 2",
+      "billingId" : 40005504,
+      "directProjectName" : "Client 40005502 Billing Account 2 Project 6",
+      "directProjectId" : 40005524,
+      "challengeTechnologies" : [ ],
+      "challengePlatforms" : [ ],
+      "challengeStartDate" : "08/01/2014 20:00",
+      "challengeEndDate" : "08/20/2014 20:00",
+      "memberPrize" : {
+        "prizes" : [ {
+          "id" : "40006169"
+        }, {
+          "id" : "40006170"
+        } ],
+        "checkPointPrizes" : [ ],
+        "totalPrize" : 1500.0,
+        "drPoints" : 450.0,
+        "reliabilityBonus" : 300.0
+      },
+      "drPoints" : 450.0,
+      "reviewCost" : null,
+      "challengeFee" : null,
+      "challengeStatus" : "Completed"
+    } ]
+  },
+  "version" : "v2"
+}

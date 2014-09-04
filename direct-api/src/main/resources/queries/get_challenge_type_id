@@ -1,0 +1,4 @@
+SELECT
+  pcl.project_category_id AS challenge_type_id
+FROM project_category_lu pcl
+WHERE LOWER(pcl.name) IN (:challenge_types)

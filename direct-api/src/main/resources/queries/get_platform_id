@@ -1,0 +1,5 @@
+SELECT
+  project_platform_id AS platform_id
+FROM  project_platform_lu ppl
+WHERE LOWER(ppl.name) IN (:platforms)
+ORDER BY name ASC

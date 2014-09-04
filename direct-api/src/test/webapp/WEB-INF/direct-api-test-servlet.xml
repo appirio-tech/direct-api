@@ -1,0 +1,123 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xmlns:mvc="http://www.springframework.org/schema/mvc"
+       xmlns:aop="http://www.springframework.org/schema/aop"
+       xmlns:tx="http://www.springframework.org/schema/tx"
+       xmlns:security="http://www.springframework.org/schema/security"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+        http://www.springframework.org/schema/beans/spring-beans.xsd
+        http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd
+        http://www.springframework.org/schema/mvc http://www.springframework.org/schema/mvc/spring-mvc.xsd
+        http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop.xsd
+        http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx.xsd
+        http://www.springframework.org/schema/security http://www.springframework.org/schema/security/spring-security.xsd">
+
+
+    <mvc:annotation-driven>
+        <mvc:message-converters register-defaults="true">
+            <bean class="com.appirio.tech.core.api.v2.controller.ApiHttpMessageConverter"/>
+        </mvc:message-converters>
+    </mvc:annotation-driven>
+
+    <context:annotation-config />
+    <aop:aspectj-autoproxy/>
+    <aop:config proxy-target-class="true" expose-proxy="true"/>
+    
+    <context:component-scan base-package="com.appirio.tech"/>
+    <context:component-scan base-package="com.topcoder.direct"/>
+
+    <context:property-placeholder ignore-unresolvable="true" location="classpath:test.properties" />
+    
+    <bean id="tcsCatalogDS" class="org.apache.commons.dbcp.BasicDataSource">
+        <property name="driverClassName" value="${jdbc-driver}"/>
+        <property name="url" value="jdbc:informix-sqli://${jdbc-server}:${jdbc-port}/tcs_catalog:INFORMIXSERVER=informixoltp_tcp"/>
+        <property name="username" value="${jdbc-username}"/>
+        <property name="password" value="${jdbc-password}"/>
+    </bean>
+    <bean id="commonOltpDS" class="org.apache.commons.dbcp.BasicDataSource">
+        <property name="driverClassName" value="${jdbc-driver}"/>
+        <property name="url" value="jdbc:informix-sqli://${jdbc-server}:${jdbc-port}/common_oltp:INFORMIXSERVER=informixoltp_tcp"/>
+        <property name="username" value="${jdbc-username}"/>
+        <property name="password" value="${jdbc-password}"/>
+    </bean>
+    <bean id="corporateOltpDS" class="org.apache.commons.dbcp.BasicDataSource">
+        <property name="driverClassName" value="${jdbc-driver}"/>
+        <property name="url" value="jdbc:informix-sqli://${jdbc-server}:${jdbc-port}/corporate_oltp:INFORMIXSERVER=informixoltp_tcp"/>
+        <property name="username" value="${jdbc-username}"/>
+        <property name="password" value="${jdbc-password}"/>
+    </bean>
+    <bean id="timeOltpDS" class="org.apache.commons.dbcp.BasicDataSource">
+        <property name="driverClassName" value="${jdbc-driver}"/>
+        <property name="url" value="jdbc:informix-sqli://${jdbc-server}:${jdbc-port}/time_oltp:INFORMIXSERVER=informixoltp_tcp"/>
+        <property name="username" value="${jdbc-username}"/>
+        <property name="password" value="${jdbc-password}"/>
+    </bean>
+    <bean id="tcsDwDS" class="org.apache.commons.dbcp.BasicDataSource">
+        <property name="driverClassName" value="${jdbc-driver}"/>
+        <property name="url" value="jdbc:informix-sqli://${jdbc-server}:${jdbc-port}/tcs_dw:INFORMIXSERVER=informixoltp_tcp"/>
+        <property name="username" value="${jdbc-username}"/>
+        <property name="password" value="${jdbc-password}"/>
+    </bean>
+
+    <bean id="txManagerTcsCatalog" class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
+        <property name="dataSource" ref="tcsCatalogDS"/>
+    </bean>
+
+    <bean id="txManagerCommonOltp" class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
+        <property name="dataSource" ref="commonOltpDS"/>
+    </bean>
+    <bean id="txManagerCorporateOltp" class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
+        <property name="dataSource" ref="corporateOltpDS"/>
+    </bean>
+    <bean id="txManagerTimeOltp" class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
+        <property name="dataSource" ref="timeOltpDS"/>
+    </bean>
+    <bean id="txManagerTcsDw" class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
+        <property name="dataSource" ref="tcsDwDS"/>
+    </bean>
+
+    <tx:advice id="txAdviceTcsCatalog" transaction-manager="txManagerTcsCatalog">
+        <tx:attributes>
+            <tx:method name="*"/>
+        </tx:attributes>
+    </tx:advice>
+
+    <tx:advice id="txAdviceCommonOltp" transaction-manager="txManagerCommonOltp">
+        <tx:attributes>
+            <tx:method name="*"/>
+        </tx:attributes>
+    </tx:advice>
+    <tx:advice id="txAdviceCorporateOltp" transaction-manager="txManagerCorporateOltp">
+        <tx:attributes>
+            <tx:method name="*"/>
+        </tx:attributes>
+    </tx:advice>
+    <tx:advice id="txAdviceTimeOltp" transaction-manager="txManagerTimeOltp">
+        <tx:attributes>
+            <tx:method name="*"/>
+        </tx:attributes>
+    </tx:advice>
+    <tx:advice id="txAdviceTcsDw" transaction-manager="txManagerTcsDw">
+        <tx:attributes>
+            <tx:method name="*"/>
+        </tx:attributes>
+    </tx:advice>
+
+    <bean id="tcsCatalogJdbc" class="org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate">
+        <constructor-arg type="javax.sql.DataSource" ref="tcsCatalogDS"/>
+    </bean>
+    <bean id="commonOltpJdbc" class="org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate">
+        <constructor-arg type="javax.sql.DataSource" ref="commonOltpDS"/>
+    </bean>
+    <bean id="corporateOltpJdbc" class="org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate">
+        <constructor-arg type="javax.sql.DataSource" ref="corporateOltpDS"/>
+    </bean>
+    <bean id="timeOltpJdbc" class="org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate">
+        <constructor-arg type="javax.sql.DataSource" ref="timeOltpDS"/>
+    </bean>
+    <bean id="tcsDwJdbc" class="org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate">
+        <constructor-arg type="javax.sql.DataSource" ref="tcsDwDS"/>
+    </bean>
+</beans>
