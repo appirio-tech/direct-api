@@ -101,6 +101,16 @@ public class ChallengeService implements RESTQueryService<Challenge> {
     private static final String DIRECT_PROJECT_ID_FILTER = " AND p.tc_direct_project_id IN (:direct_project_ids)\n";
 
     /**
+     * The client id filter.
+     */
+    private static final String CLIENT_ID_FILTER = " AND client_billing_info.client_id IN (:client_ids)\n";
+
+    /**
+     * The billing id filter.
+     */
+    private static final String BILLING_ID_FILTER = " AND client_billing_info.billing_id IN (:billing_ids)\n";
+
+    /**
      * The project id filter.
      */
     private static final String PROJECT_ID_FILTER = " AND p.project_id IN (:project_ids)\n";
@@ -237,7 +247,7 @@ public class ChallengeService implements RESTQueryService<Challenge> {
             challenges = challengeDAO.getMyChallenge(customFilter, sqlParameters, orderClause);
 
             if (challenges.size() > 0) {
-                mergePrizesToChallenges(challenges, sqlParameters, customFilter);
+                mergePrizesToChallenges(challenges);
             }
         } catch (IOException e) {
             throw new ServerInternalException("An error occurred while querying for challenges", e);
@@ -314,23 +324,19 @@ public class ChallengeService implements RESTQueryService<Challenge> {
      * Merges the corresponding Prizes to Challenges.
      *
      * @param challenges The challenges to be filled with Prizes.
-     * @param sqlParameters The sql parameters to use in querying prizes and challenges.
-     * @param customFilter The filter to use in querying
      * @throws IOException When an error occurs while querying the prizes.
      */
-    private void mergePrizesToChallenges(List<Challenge> challenges, Map<String, Object> sqlParameters,
-        List<String> customFilter) throws IOException {
+    private void mergePrizesToChallenges(List<Challenge> challenges) throws IOException {
 
         // NOTE: get all the projects from the challenges retrieved to query the prizes efficiently
         List<Integer> projectIds = new ArrayList<Integer>();
         for (Challenge challenge : challenges) {
             projectIds.add(Integer.valueOf(challenge.getId().toString()));
         }
-        // Get the challenge type id and insert into sqlParameters.
+        Map<String, Object> sqlParameters = new HashMap<String, Object>();
         sqlParameters.put("project_ids", projectIds);
-        customFilter.add(PROJECT_ID_FILTER);
 
-        List<Prize> prizes = challengeDAO.getMyChallengesPrizes(customFilter, sqlParameters);
+        List<Prize> prizes = challengeDAO.getMyChallengesPrizes(new ArrayList<String>(), sqlParameters);
 
         Map<Integer, List<Prize>> challengeId2PrizeMap = new HashMap<Integer, List<Prize>>();
 
@@ -417,6 +423,28 @@ public class ChallengeService implements RESTQueryService<Challenge> {
                     }
                 } catch (NumberFormatException nfe) {
                     throw new BadRequestException("Invalid directProjectId.");
+                }
+            }
+        }
+
+        if (filter.contains("clientId")) {
+            List<String> values = toValueList(filter.get("clientId"), false);
+            for (String val : values) {
+                try {
+                    Integer.parseInt(val);
+                } catch (NumberFormatException nfe) {
+                    throw new BadRequestException("Invalid clientId.");
+                }
+            }
+        }
+
+        if (filter.contains("billingId")) {
+            List<String> values = toValueList(filter.get("billingId"), false);
+            for (String val : values) {
+                try {
+                    Integer.parseInt(val);
+                } catch (NumberFormatException nfe) {
+                    throw new BadRequestException("Invalid billingId.");
                 }
             }
         }
@@ -559,6 +587,26 @@ public class ChallengeService implements RESTQueryService<Challenge> {
                 }
                 filterToAdd.add("AND (" + StringUtils.join(pnameFilters, " OR ") + ") \n");
             }
+        }
+
+        if (filter.contains("clientId")) {
+            List<String> values = toValueList(filter.get("clientId"), true);
+            List<Integer> clientIds = new ArrayList<Integer>();
+            for (String id : values) {
+                clientIds.add(Integer.valueOf(id));
+            }
+            sqlParameters.put("client_ids", clientIds);
+            filterToAdd.add(CLIENT_ID_FILTER);
+        }
+
+        if (filter.contains("billingId")) {
+            List<String> values = toValueList(filter.get("billingId"), true);
+            List<Integer> billingIds = new ArrayList<Integer>();
+            for (String id : values) {
+                billingIds.add(Integer.valueOf(id));
+            }
+            sqlParameters.put("billing_ids", billingIds);
+            filterToAdd.add(BILLING_ID_FILTER);
         }
         return filterToAdd;
     }

@@ -1133,6 +1133,52 @@ public class MyChallengesTest extends BaseDirectAPITest {
             , MEMBER_HEFFAN_TOKEN)
             .andExpect(status().isOk())
             .andExpect(jsonPath("$.result.content", Matchers.hasSize(0)));
+    }
+
+    /**
+     * Test clientId filter.
+     *
+     * @throws Exception if any error occurred.
+     */
+    @Test
+    public void success_scenario_36() throws Exception {
+        createRequest("?limit=1000&filter=" + encode("creator=heffan&clientId=40005501")
+            , MEMBER_HEFFAN_TOKEN)
+            .andExpect(status().isOk())
+            .andExpect(jsonPath("$.result.content[0].clientId", is(40005501)))
+            .andExpect(jsonPath("$.result.content", Matchers.hasSize(120)));
+        createRequest("?limit=1000&filter=" + encode("creator=heffan&clientId=40005502")
+            , MEMBER_HEFFAN_TOKEN)
+            .andExpect(status().isOk())
+            .andExpect(jsonPath("$.result.content[0].clientId", is(40005502)))
+            .andExpect(jsonPath("$.result.content", Matchers.hasSize(120)));
+        createRequest("?limit=1000&filter=" + encode("creator=heffan&clientId=in(40005501,40005502)")
+            , MEMBER_HEFFAN_TOKEN)
+            .andExpect(status().isOk())
+            .andExpect(jsonPath("$.result.content", Matchers.hasSize(240)));
+    }
+
+    /**
+     * Test billingId filter.
+     *
+     * @throws Exception if any error occurred.
+     */
+    @Test
+    public void success_scenario_37() throws Exception {
+        createRequest("?limit=1000&filter=" + encode("creator=heffan&billingId=40005502")
+            , MEMBER_HEFFAN_TOKEN)
+            .andExpect(status().isOk())
+            .andExpect(jsonPath("$.result.content[0].billingId", is(40005502)))
+            .andExpect(jsonPath("$.result.content", Matchers.hasSize(60)));
+        createRequest("?limit=1000&filter=" + encode("creator=heffan&billingId=40005504")
+            , MEMBER_HEFFAN_TOKEN)
+            .andExpect(status().isOk())
+            .andExpect(jsonPath("$.result.content[0].billingId", is(40005504)))
+            .andExpect(jsonPath("$.result.content", Matchers.hasSize(60)));
+        createRequest("?limit=1000&filter=" + encode("creator=heffan&clientId=in(40005502,40005504)")
+            , MEMBER_HEFFAN_TOKEN)
+            .andExpect(status().isOk())
+            .andExpect(jsonPath("$.result.content", Matchers.hasSize(120)));
         isDone = true;
         isInit = false;
     }
