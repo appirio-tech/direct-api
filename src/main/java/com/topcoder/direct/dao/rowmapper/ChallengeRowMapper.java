@@ -58,12 +58,7 @@ public class ChallengeRowMapper implements RowMapper<Challenge> {
         Integer directProjectId = rs.getInt("direct_project_id");
         challenge.setDirectProjectId(rs.wasNull() ? null : directProjectId);
         challenge.setDirectProjectName(rs.getString("direct_project_name"));
-
-        MemberPrize memberPrize = new MemberPrize();
-        memberPrize.setReliabilityBonus(rs.getDouble("reliability_bonus"));
-        if (!rs.wasNull()) {
-            challenge.setMemberPrize(memberPrize);
-        }
+        challenge.setReliabilityBonus(rs.getDouble("reliability_bonus"));
 
         List<String> challengeTechnologies = new ArrayList<String>();
         if (isNotNullNorEmpty(technologies)) {
