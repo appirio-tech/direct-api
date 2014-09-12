@@ -358,10 +358,8 @@ public class ChallengeService implements RESTQueryService<Challenge> {
             List<Prize> checkPointPrizes = new ArrayList<Prize>();
             Double totalPrizes = 0.0;
             List<Prize> prs = challengeId2PrizeMap.get(Integer.valueOf(challenge.getId().toString()));
-            if (challenge.getMemberPrize() == null) {
-                challenge.setMemberPrize(new MemberPrize());
-            }
-            MemberPrize memberPrize = challenge.getMemberPrize();
+
+            MemberPrize memberPrize = new MemberPrize();
             memberPrize.setDrPoints(challenge.getDrPoints());
             if (!isNull(prs)) {
                 for (Prize prize : prs) {
@@ -381,6 +379,11 @@ public class ChallengeService implements RESTQueryService<Challenge> {
                 memberPrize.setCheckPointPrizes(checkPointPrizes);
             }
             memberPrize.setTotalPrize(totalPrizes);
+
+
+            challenge.setPrizes(memberPrize.getPrizes());
+            challenge.setCheckPointPrizes(memberPrize.getCheckPointPrizes());
+            challenge.setTotalPrize(memberPrize.getTotalPrize());
         }
     }
 
