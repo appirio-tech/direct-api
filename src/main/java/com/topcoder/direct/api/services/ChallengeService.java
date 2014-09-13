@@ -3,24 +3,9 @@
  */
 package com.topcoder.direct.api.services;
 
-import static com.topcoder.direct.util.Helper.isNull;
-
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
-import javax.servlet.http.HttpServletRequest;
-
-import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-
 import com.appirio.tech.core.api.v2.CMCID;
-import com.appirio.tech.core.api.v2.model.AbstractIdResource;
+import com.appirio.tech.core.api.v2.metadata.CountableMetadata;
+import com.appirio.tech.core.api.v2.metadata.Metadata;
 import com.appirio.tech.core.api.v2.model.annotation.ApiMapping;
 import com.appirio.tech.core.api.v2.request.FieldSelector;
 import com.appirio.tech.core.api.v2.request.FilterParameter;
@@ -28,6 +13,7 @@ import com.appirio.tech.core.api.v2.request.LimitQuery;
 import com.appirio.tech.core.api.v2.request.OrderByQuery;
 import com.appirio.tech.core.api.v2.request.QueryParameter;
 import com.appirio.tech.core.api.v2.request.SortOrder;
+import com.appirio.tech.core.api.v2.service.AbstractMetadataService;
 import com.appirio.tech.core.api.v2.service.RESTQueryService;
 import com.topcoder.direct.api.model.Challenge;
 import com.topcoder.direct.api.model.MemberPrize;
@@ -41,16 +27,30 @@ import com.topcoder.direct.dao.UserDAO;
 import com.topcoder.direct.exception.BadRequestException;
 import com.topcoder.direct.exception.ServerInternalException;
 import com.topcoder.direct.util.Helper;
+import org.apache.commons.lang.StringUtils;
+import org.apache.log4j.Logger;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import javax.servlet.http.HttpServletRequest;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import static com.topcoder.direct.util.Helper.isNull;
 
 /**
  * This is the service implementation for the My Challenges API.
  *
- * @author TCSASSEMBLER
+ * @author j3_guile
  * @version 1.0
  * @since 1.0 (Topcoder Direct API - My Challenges API v1.0)
  */
 @Service
-public class ChallengeService implements RESTQueryService<Challenge> {
+public class ChallengeService extends AbstractMetadataService implements RESTQueryService<Challenge> {
 
     /**
      * Logger instance.
@@ -195,7 +195,7 @@ public class ChallengeService implements RESTQueryService<Challenge> {
      * @return none
      * @throws UnsupportedOperationException always
      */
-    public AbstractIdResource handleGet(FieldSelector selector, CMCID recordId) {
+    public Challenge handleGet(FieldSelector selector, CMCID recordId) {
         throw new UnsupportedOperationException("not implemented");
     }
 
@@ -564,6 +564,49 @@ public class ChallengeService implements RESTQueryService<Challenge> {
             }
         }
         return filterToAdd;
+    }
+
+
+    /**
+     * Gets the metadata
+     *
+     * @param request the http servlet request.
+     * @param query the QueryParameter instance.
+     * @return the metadata
+     * @throws Exception if any error.
+     */
+    @Override
+    public Metadata getMetadata(HttpServletRequest request, QueryParameter query) throws Exception {
+        CountableMetadata metadata = new CountableMetadata();
+        DirectAuthenticationToken identity = SecurityUtil.getAuthentication(request);
+        identity.authorize(AccessLevel.ADMIN, AccessLevel.MEMBER);
+
+        try {
+            Map<String, Object> sqlParameters = new HashMap<String, Object>();
+            List<String> customFilter = new ArrayList<String>();
+
+            // validate filters
+            validateQuery(identity.getUserId(), query);
+
+            // for access checking
+            sqlParameters.put("user_id", identity.getUserId());
+
+            if (query.getFilter().contains("creator")) {
+                // Perform "My created challenges" flow
+                customFilter = getCreatorChallengeFilters(identity, query, sqlParameters);
+                sqlParameters.put("creator_id", identity.getUserId());
+            } // otherwise, ignore all filters
+
+            Integer myChallengesCount = challengeDAO.getMyChallengesCount(customFilter, sqlParameters);
+
+            if (myChallengesCount != null) {
+                metadata.setTotalCount(myChallengesCount);
+            }
+        } catch (IOException e) {
+            throw new ServerInternalException("An error occurred while querying for challenges total count", e);
+        }
+
+        return metadata;
     }
 
     /**
