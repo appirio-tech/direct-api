@@ -175,6 +175,18 @@
             <name>SpringSource Enterprise Bundle Repository - External Bundle Releases</name>
             <url>http://repository.springsource.com/maven/bundles/external</url>
         </repository>
+
+        <repository>
+            <id>Appirio Technology Maven Repository</id>
+            <url>http://maven.appirio.net:8080/</url>
+            <snapshots>
+                <updatePolicy>always</updatePolicy>
+            </snapshots>
+            <releases>
+                <updatePolicy>always</updatePolicy>
+            </releases>
+        </repository>
+
     </repositories>
 
 	<build>
