@@ -6,6 +6,8 @@ INNER JOIN project_info pi1 ON pi1.project_id = p.project_id AND pi1.project_inf
 INNER JOIN project_phase reg_phase ON reg_phase.project_id = p.project_id AND reg_phase.phase_type_id = 1
 INNER JOIN project_status_lu psl ON psl.project_status_id = p.project_status_id
 WHERE
+p.project_status_id != 3 
+AND
 (
     (p.create_user = :user_id)
     OR

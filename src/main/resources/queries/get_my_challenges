@@ -44,6 +44,8 @@ LEFT JOIN (
            ELSE 0 -- There is no billing account for this challenge.
       END),0)
 WHERE
+p.project_status_id != 3 
+AND
 (
     (p.create_user = :user_id)
     OR
