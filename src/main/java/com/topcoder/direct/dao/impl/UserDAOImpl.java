@@ -11,6 +11,8 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.stereotype.Repository;
 
+import org.apache.log4j.Logger;
+
 import java.io.IOException;
 import java.util.Collections;
 import java.util.HashMap;
@@ -37,6 +39,11 @@ public class UserDAOImpl implements UserDAO {
     @Autowired
     @Qualifier("commonOltpJdbc")
     private NamedParameterJdbcTemplate commonOltpJdbcTemplate;
+
+    /**
+     * Logger instance.
+     */
+    private static final Logger LOG = Logger.getLogger(UserDAOImpl.class);
 
     /**
      * Gets user handle by given user id.
@@ -67,7 +74,19 @@ public class UserDAOImpl implements UserDAO {
     @Override
     public Integer getUserIdBySocialLogin(String providerId, Integer socialUserId) throws IOException {
         Map<String, Object> sqlParameters = new HashMap<String, Object>();
-        sqlParameters.put("provider_id", providerId);
+
+        int pid = 0;
+        if (providerId.toLowerCase().startsWith("facebook")) {
+            pid = 1;
+        } else if (providerId.toLowerCase().startsWith("google")) {
+            pid = 2;
+        } else if (providerId.toLowerCase().startsWith("twitter")) {
+            pid = 3;
+        } else if (providerId.toLowerCase().startsWith("github")) {
+            pid = 4;
+        } 
+
+        sqlParameters.put("provider_id", pid);
         sqlParameters.put("social_user_id", socialUserId);
         List<Integer> userId = DataAccess.getSingleResultByQuery("get_user_by_social_login", sqlParameters,
                 Integer.class, commonOltpJdbcTemplate);
