@@ -3,7 +3,7 @@ SELECT
 , pr.prize_amount
 , pr.project_id AS challenge_id
 , pr.prize_type_id AS prize_type
-, pr.number_of_submissions AS number_of_prize
+, case when pr.prize_type_id = 15 then 1 else pr.number_of_submissions end AS number_of_prize
 , pr.prize_id
 FROM prize pr
 INNER JOIN project p ON p.project_id = pr.project_id
