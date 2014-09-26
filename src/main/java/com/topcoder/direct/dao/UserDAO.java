@@ -31,7 +31,7 @@ public interface UserDAO {
      * @return The user id in topcoder system.
      * @throws IOException if error occurred while read query.
      */
-    Integer getUserIdBySocialLogin(String providerId, Integer socialUserId) throws IOException;
+    Integer getUserIdBySocialLogin(String providerId, String socialUserId) throws IOException;
 
     /**
      * Check if the given user id is represent a admin in topcoder system.

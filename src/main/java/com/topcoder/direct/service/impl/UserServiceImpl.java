@@ -51,9 +51,9 @@ public class UserServiceImpl implements UserService {
      * @throws IOException if error occurred while read query.
      */
     @Override
-    public Integer getUserIdBySocialLogin(String providerId, Integer socialUserId) throws IOException {
+    public Integer getUserIdBySocialLogin(String providerId, String socialUserId) throws IOException {
         checkArgument(isNotNullNorEmpty(providerId), "provider id should be positive.");
-        checkArgument(socialUserId > 0, "social user id should be positive.");
+        checkArgument(isNotNullNorEmpty(socialUserId), "social user id should be positive.");
         return userDAO.getUserIdBySocialLogin(providerId, socialUserId);
     }
 

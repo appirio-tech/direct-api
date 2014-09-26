@@ -111,7 +111,7 @@ public class SecurityUtil {
         try {
             String token = request.getHeader("Authorization");
             // Initial a anonymous caller and set it into request.
-            Integer userId;
+            Integer userId = 0;
 
             if (token == null) {
                 // The anonymous caller.
@@ -132,14 +132,16 @@ public class SecurityUtil {
 
             checkArgument(splitResults.length >= 2, "Malformed Auth header. userId or provider is missing.");
 
-            Integer socialUserId = Integer.valueOf(splitResults[1]);
+            String socialUserId = splitResults[1];
             String socialUserProvider = splitResults[0];
 
-            userId = socialUserId;
+            //userId = socialUserId;
 
             // Fetch the userId for social login user.
             if (!socialUserProvider.equals(TOPCODER_AD)) {
                 userId = userService.getUserIdBySocialLogin(socialUserProvider, socialUserId);
+            } else {
+                userId = Integer.valueOf(socialUserId);
             }
 
             String handle = userService.getUserHandle(userId);

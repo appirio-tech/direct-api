@@ -72,7 +72,7 @@ public class UserDAOImpl implements UserDAO {
      * @throws IOException if error occurred while read query.
      */
     @Override
-    public Integer getUserIdBySocialLogin(String providerId, Integer socialUserId) throws IOException {
+    public Integer getUserIdBySocialLogin(String providerId, String socialUserId) throws IOException {
         Map<String, Object> sqlParameters = new HashMap<String, Object>();
 
         int pid = 0;
@@ -85,6 +85,10 @@ public class UserDAOImpl implements UserDAO {
         } else if (providerId.toLowerCase().startsWith("github")) {
             pid = 4;
         } 
+
+LOG.debug("--providerId-------: " + providerId);
+LOG.debug("--socialUserId-------: " + socialUserId);
+LOG.debug("--pid-------: " + pid);
 
         sqlParameters.put("provider_id", pid);
         sqlParameters.put("social_user_id", socialUserId);
