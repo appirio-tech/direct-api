@@ -19,6 +19,7 @@ FIRST :page_size
 , client_billing_info.client_name
 , CASE WHEN rel_flag.value = 'true' THEN rel_cost.value::decimal ELSE NULL END AS reliability_bonus
 , psl.name as challenge_status
+, (select handle from user where user_id = p.create_user) as challenge_creator
 FROM project p
 INNER JOIN project_info pn ON pn.project_id = p.project_id AND pn.project_info_type_id = 6
 INNER JOIN project_info pi1 ON pi1.project_id = p.project_id AND pi1.project_info_type_id = 1

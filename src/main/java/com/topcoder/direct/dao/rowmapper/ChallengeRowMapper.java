@@ -81,6 +81,7 @@ public class ChallengeRowMapper implements RowMapper<Challenge> {
                 MY_CHALLENGE_DATE_FORMAT));
         challenge.setChallengeEndDate(formatDate(rs.getDate("challenge_end_date"), MY_CHALLENGE_DATE_FORMAT));
         challenge.setChallengeStatus(rs.getString("challenge_status"));
+        challenge.setChallengeCreator(rs.getString("challenge_creator"));
 
         return challenge;
     }

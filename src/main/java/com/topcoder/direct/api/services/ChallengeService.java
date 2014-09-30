@@ -158,6 +158,7 @@ public class ChallengeService extends AbstractMetadataService implements RESTQue
             put("challengeenddate", "challenge_end_date");
             put("drpoints", "dr_points");
             put("challengestatus", "challenge_status");
+            put("challengecreator", "challenge_creator");
         }
     };
 

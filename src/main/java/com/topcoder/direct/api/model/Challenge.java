@@ -105,6 +105,11 @@ public class Challenge extends AbstractIdResource {
     private String challengeStatus;
 
     /**
+     * Challenge creator.
+     */
+    private String challengeCreator;
+
+    /**
      * Empty constructor.
      */
     public Challenge() {
@@ -500,5 +505,23 @@ public class Challenge extends AbstractIdResource {
      */
     public void setReliabilityBonus(Double reliabilityBonus) {
         this.reliabilityBonus = reliabilityBonus;
+    }
+
+    /**
+     * Gets the value of the field <code>challengeCreator</code>.
+     *
+     * @return the challengeCreator
+     */
+    public String getChallengeCreator() {
+        return challengeCreator;
+    }
+
+    /**
+     * Sets the value of the field <code>challengeCreator</code>.
+     *
+     * @param challengeCreator the challengeCreator to set
+     */
+    public void setChallengeCreator(String challengeCreator) {
+        this.challengeCreator = challengeCreator;
     }
 }
