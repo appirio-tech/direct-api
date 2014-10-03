@@ -240,7 +240,9 @@ public class ChallengeService extends AbstractMetadataService implements RESTQue
                 // Perform "My created challenges" flow
                 customFilter = getCreatorChallengeFilters(identity, query, sqlParameters);
                 sqlParameters.put("creator_id", identity.getUserId());
-            } // otherwise, ignore all filters
+            } else {
+                customFilter = getMyChallengeFilters(query, sqlParameters);
+            }
 
             // limit results
             populateLimitQuery(query, sqlParameters);
@@ -481,11 +483,28 @@ public class ChallengeService extends AbstractMetadataService implements RESTQue
      */
     private List<String> getCreatorChallengeFilters(DirectAuthenticationToken identity, QueryParameter query,
         Map<String, Object> sqlParameters) throws IOException {
-        FilterParameter filter = query.getFilter();
         List<String> filterToAdd = new ArrayList<String>();
 
         filterToAdd.add(CREATOR_FILTER);
         sqlParameters.put("creator_id", identity.getUserId());
+
+        filterToAdd.addAll(getMyChallengeFilters(query, sqlParameters));
+        return filterToAdd;
+    }
+
+    /**
+     * Get the challenge filters to be used in the my challenges query and set the appropriate sql parameters as well.
+     *
+     * @param query The filters and limits to be used in the query.
+     * @param sqlParameters The sql parameters object that will be used when execute query.
+     * @return The list of filter content that need to add into query manually.
+     * @exception IOException If something went wrong when read the query.
+     */
+    private List<String> getMyChallengeFilters(QueryParameter query,
+                                                    Map<String, Object> sqlParameters) throws IOException {
+
+        FilterParameter filter = query.getFilter();
+        List<String> filterToAdd = new ArrayList<String>();
 
         if (filter.contains("challengeType")) {
             // Get the challenge type id and insert into sqlParameters.
@@ -585,8 +604,8 @@ public class ChallengeService extends AbstractMetadataService implements RESTQue
                 for (String value : values) {
                     sqlParameters.put("direct_project_name" + index, "%" + value + "%");
                     pnameFilters.add("EXISTS (SELECT 1 FROM tc_direct_project tdp "
-                        + "WHERE tdp.project_id = p.tc_direct_project_id AND LOWER(tdp.name) "
-                        + "LIKE (:direct_project_name" + index + "))");
+                                             + "WHERE tdp.project_id = p.tc_direct_project_id AND LOWER(tdp.name) "
+                                             + "LIKE (:direct_project_name" + index + "))");
                     index++;
                 }
                 filterToAdd.add("AND (" + StringUtils.join(pnameFilters, " OR ") + ") \n");
@@ -627,12 +646,13 @@ public class ChallengeService extends AbstractMetadataService implements RESTQue
     @Override
     public Metadata getMetadata(HttpServletRequest request, QueryParameter query) throws Exception {
         CountableMetadata metadata = new CountableMetadata();
+
         DirectAuthenticationToken identity = SecurityUtil.getAuthentication(request);
         identity.authorize(AccessLevel.ADMIN, AccessLevel.MEMBER);
 
         try {
             Map<String, Object> sqlParameters = new HashMap<String, Object>();
-            List<String> customFilter = new ArrayList<String>();
+            List<String> customFilter;
 
             // validate filters
             validateQuery(identity.getUserId(), query);
@@ -644,7 +664,9 @@ public class ChallengeService extends AbstractMetadataService implements RESTQue
                 // Perform "My created challenges" flow
                 customFilter = getCreatorChallengeFilters(identity, query, sqlParameters);
                 sqlParameters.put("creator_id", identity.getUserId());
-            } // otherwise, ignore all filters
+            } else {
+                customFilter = getMyChallengeFilters(query, sqlParameters);
+            }
 
             Integer myChallengesCount = challengeDAO.getMyChallengesCount(customFilter, sqlParameters);
 
