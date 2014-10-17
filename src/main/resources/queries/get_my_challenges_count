@@ -3,8 +3,23 @@ SELECT
 FROM project p
 INNER JOIN project_info pn ON pn.project_id = p.project_id AND pn.project_info_type_id = 6
 INNER JOIN project_info pi1 ON pi1.project_id = p.project_id AND pi1.project_info_type_id = 1
+LEFT JOIN project_info pi32 ON pi32.project_id = p.project_id AND pi32.project_info_type_id = 32
 INNER JOIN project_phase reg_phase ON reg_phase.project_id = p.project_id AND reg_phase.phase_type_id = 1
 INNER JOIN project_status_lu psl ON psl.project_status_id = p.project_status_id
+LEFT JOIN (
+  SELECT
+    billing.name AS billing_name
+  , billing.project_id AS billing_id
+  , c.client_id
+  , c.name AS client_name
+  FROM time_oltp\:project billing
+  INNER JOIN time_oltp\:client_project cp ON cp.project_id = billing.project_id
+  INNER JOIN time_oltp\:client c ON c.client_id = cp.client_id
+) AS client_billing_info ON client_billing_info.billing_id = NVL(
+      (CASE WHEN pi32.value > 0 THEN pi32.value::INTEGER -- get billing account id from project_info
+           WHEN p.tc_direct_project_id IS NOT NULL THEN (SELECT MIN(billing_account_id) FROM direct_project_account dpa WHERE dpa.project_id = p.tc_direct_project_id) -- get billing account id from direct_project_account
+           ELSE 0 -- There is no billing account for this challenge.
+      END),0)
 WHERE
 p.project_status_id != 3 
 AND
