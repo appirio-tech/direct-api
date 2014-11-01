@@ -34,8 +34,12 @@ import org.springframework.stereotype.Service;
 
 import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -45,8 +49,13 @@ import static com.topcoder.direct.util.Helper.isNull;
 /**
  * This is the service implementation for the My Challenges API.
  *
- * @author j3_guile
- * @version 1.0
+ * <p>
+ * Version 1.1 (TopCoder Direct API - Add New Date Filters for Challenges API)
+ * - Add (startDateFrom, startDateTo), (endDateFrom, endDateTo) filters.
+ * </p>
+ *
+ * @author j3_guile, Veve
+ * @version 1.1
  * @since 1.0 (Topcoder Direct API - My Challenges API v1.0)
  */
 @Service
@@ -56,6 +65,28 @@ public class ChallengeService extends AbstractMetadataService implements RESTQue
      * Logger instance.
      */
     private static final Logger LOG = Logger.getLogger(ChallengeService.class);
+
+
+    /**
+     * Start/End Date formatter
+     *
+     * @since 1.1
+     */
+    private static SimpleDateFormat DATE_FORMAT = new SimpleDateFormat("MM/dd/yyyy");
+
+    /**
+     * The max date to use when an upper bound is not specified in the date filter.
+     *
+     * @since 1.1
+     */
+    private static Date MAX_DATE = new Date(Long.MAX_VALUE);
+
+    /**
+     * The min date to use when a lower bound is not specified in the date filter.
+     *
+     * @since 1.1
+     */
+    private static Date MIN_DATE = new Date(Long.MIN_VALUE);
 
     /**
      * A placeholder to ensure there are no matches returned when search of lookup values
@@ -119,6 +150,20 @@ public class ChallengeService extends AbstractMetadataService implements RESTQue
      * The type filter.
      */
     private static final String TYPE_FILTER = " AND p.project_status_id IN (:type_id)\n";
+
+    /**
+     * The challenge start date filter.
+     *
+     * @since 1.1
+     */
+    private static final String START_DATE_FILTER = "AND (NVL(reg_phase.actual_start_time, reg_phase.scheduled_start_time) BETWEEN :startDateFrom AND :startDateTo)\n";
+
+    /**
+     * The challenge end date filter.
+     *
+     * @since 1.1
+     */
+    private static final String END_DATE_FILTER = "AND ((SELECT NVL(MAX(actual_end_time), MAX(scheduled_end_time)) FROM project_phase pp where pp.project_id = p.project_id) BETWEEN :endDateFrom AND :endDateTo)\n";
 
     /**
      * The active project status name.
@@ -455,6 +500,42 @@ public class ChallengeService extends AbstractMetadataService implements RESTQue
             }
         }
 
+        if (filter.contains("startDateFrom")) {
+            String startDateFrom = toValueList(filter.get("startDateFrom"), true).get(0);
+            try {
+                DATE_FORMAT.parse(startDateFrom);
+            } catch (ParseException pe) {
+                throw new BadRequestException("Invalid challenge start date filter, should be MM/dd/yyyy");
+            }
+        }
+
+        if (filter.contains("startDateTo")) {
+            String startDateTo = toValueList(filter.get("startDateTo"), true).get(0);
+            try {
+                DATE_FORMAT.parse(startDateTo);
+            } catch (ParseException pe) {
+                throw new BadRequestException("Invalid challenge start date filter, should be MM/dd/yyyy");
+            }
+        }
+
+        if (filter.contains("endDateFrom")) {
+            String endDateFrom = toValueList(filter.get("endDateFrom"), true).get(0);
+            try {
+                DATE_FORMAT.parse(endDateFrom);
+            } catch (ParseException pe) {
+                throw new BadRequestException("Invalid challenge end date filter, should be MM/dd/yyyy");
+            }
+        }
+
+        if (filter.contains("endDateTo")) {
+            String endDateTo = toValueList(filter.get("endDateTo"), true).get(0);
+            try {
+                DATE_FORMAT.parse(endDateTo);
+            } catch (ParseException pe) {
+                throw new BadRequestException("Invalid challenge end date filter, should be MM/dd/yyyy");
+            }
+        }
+
         // check limits, technically this should be done by the framework since it built the query object
         // but for compatibility with the existing code, we perform some checks for now
         LimitQuery limitQuery = query.getLimitQuery();
@@ -631,9 +712,117 @@ public class ChallengeService extends AbstractMetadataService implements RESTQue
             sqlParameters.put("billing_ids", billingIds);
             filterToAdd.add(BILLING_ID_FILTER);
         }
+
+
+
+        try {
+
+            boolean startDateFilterAdded = false;
+
+            if (filter.contains("startDateFrom")) {
+                String strDateFrom = toValueList(filter.get("startDateFrom"), true).get(0);
+
+                sqlParameters.put("startDateFrom", DATE_FORMAT.parse(strDateFrom));
+
+                if (!filter.contains("startDateTo")) {
+                    // there is no upper bound, use the largest date as upper bound
+                    sqlParameters.put("startDateTo", MAX_DATE);
+                }
+
+                // if filter not added, add it
+                if(!startDateFilterAdded) {
+                    filterToAdd.add(START_DATE_FILTER);
+                    startDateFilterAdded = true;
+                }
+
+            }
+
+            if (filter.contains("startDateTo")) {
+                String startDateTo = toValueList(filter.get("startDateTo"), true).get(0);
+
+                sqlParameters.put("startDateTo", processEndDate(DATE_FORMAT.parse(startDateTo)));
+
+                if (!filter.contains("startDateFrom")) {
+                    // there is no lower bound, use the min date as lower bound
+                    sqlParameters.put("startDateFrom", MIN_DATE);
+                }
+
+                // if filter not added, add it
+                if(!startDateFilterAdded) {
+                    filterToAdd.add(START_DATE_FILTER);
+                    startDateFilterAdded = true;
+                }
+
+            }
+        } catch (ParseException pe) {
+            throw new IOException("Error when read / parse the start date filter", pe);
+        }
+
+        try {
+
+            boolean endDateFilterAdded = false;
+
+            if (filter.contains("endDateFrom")) {
+                String endDateFrom = toValueList(filter.get("endDateFrom"), true).get(0);
+
+                sqlParameters.put("endDateFrom", DATE_FORMAT.parse(endDateFrom));
+
+                if (!filter.contains("endDateTo")) {
+                    // there is no upper bound, use the largest date as upper bound
+                    sqlParameters.put("endDateTo", MAX_DATE);
+                }
+
+                // if filter not added, add it
+                if(!endDateFilterAdded) {
+                    filterToAdd.add(END_DATE_FILTER);
+                    endDateFilterAdded = true;
+                }
+
+            }
+
+            if (filter.contains("endDateTo")) {
+                String endDateTo = toValueList(filter.get("endDateTo"), true).get(0);
+
+                sqlParameters.put("endDateTo", processEndDate(DATE_FORMAT.parse(endDateTo)));
+
+                if (!filter.contains("endDateFrom")) {
+                    // there is no lower bound, use the min date as lower bound
+                    sqlParameters.put("endDateFrom", MIN_DATE);
+                }
+
+                // if filter not added, add it
+                if(!endDateFilterAdded) {
+                    filterToAdd.add(END_DATE_FILTER);
+                    endDateFilterAdded = true;
+                }
+
+            }
+        } catch (ParseException pe) {
+            throw new IOException("Error when read / parse the start date filter", pe);
+        }
+
+
         return filterToAdd;
     }
 
+    /**
+     * Helper method to process the end date to set its time fragmentation to 23:59:59
+     *
+     * @param endDate
+     * @return the processed end date.
+     *
+     * @since 1.1
+     */
+    private Date processEndDate(Date endDate) {
+        Calendar c = Calendar.getInstance();
+        c.setTime(endDate);
+
+        c.set(Calendar.HOUR_OF_DAY, 23);
+        c.set(Calendar.MINUTE, 59);
+        c.set(Calendar.SECOND, 59);
+
+        return c.getTime();
+    }
 
     /**
      * Gets the metadata
