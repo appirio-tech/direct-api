@@ -133,6 +133,9 @@ public class SecurityUtil {
             checkArgument(splitResults.length >= 2, "Malformed Auth header. userId or provider is missing.");
 
             String socialUserId = splitResults[1];
+            if (splitResults.length==3) {
+                socialUserId = splitResults[2];
+            }
             String socialUserProvider = splitResults[0];
 
             //userId = socialUserId;
