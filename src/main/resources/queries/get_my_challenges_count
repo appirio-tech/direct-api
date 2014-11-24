@@ -76,7 +76,7 @@ AND
             AND axcheck_gm.unassigned_on is null
             AND axcheck_sg.archived = 0
             AND axcheck_dpa.project_id = p.tc_direct_project_id
-            AND axcheck_ttc.client_status_id = 1
+            AND axcheck_ttc.status = 1
             AND (
                 (axcheck_gm.use_group_default=0 and axcheck_gm.specific_permission!='REPORT')
                 OR
