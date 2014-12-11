@@ -86,7 +86,7 @@ public class ChallengeService extends AbstractMetadataService implements RESTQue
      *
      * @since 1.1
      */
-    private static Date MIN_DATE = new Date(Long.MIN_VALUE);
+    private static Date MIN_DATE = new Date(0);
 
     /**
      * A placeholder to ensure there are no matches returned when search of lookup values
