@@ -1,9 +1,10 @@
 {
-  "id" : "375d5da9:1483af80904:-7fe5",
-  "result" : {
-    "success" : true,
-    "status" : 200,
-    "content" : [ ]
+  "id": "-52e0954c:14ae7f2b20b:-7fae",
+  "result": {
+    "success": true,
+    "status": 200,
+    "metadata": null,
+    "content": []
   },
-  "version" : "v2"
+  "version": "v2"
 }

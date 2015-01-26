@@ -1,0 +1,46 @@
+{
+  "id": "23681f5f:14ac320cce2:-7ff5",
+  "result": {
+    "success": true,
+    "status": 200,
+    "metadata": {
+      "fields": null,
+      "totalCount": 2
+    },
+    "content": [
+      {
+        "id": "30000013",
+        "projectName": "Client 30000002 Billing Account 2 Project 1",
+        "projectStatusId": 4,
+        "projectStatusName": "Completed",
+        "projectCreatedDate": "12/19/2014 13:12",
+        "projectCreatedBy": 132458,
+        "projectLastUpdatedDate": "12/22/2014 19:18",
+        "billings": [
+          {
+            "id": "30000005",
+
+            "name": "Client 30000002 Secret Billing Account 2"
+          }
+        ]
+      },
+      {
+        "id": "30000008",
+        "projectName": "Client 30000001 Billing Account 3 Good Project 2",
+        "projectStatusId": 4,
+        "projectStatusName": "Completed",
+        "projectCreatedDate": "12/24/2014 08:12",
+        "projectCreatedBy": 124916,
+        "projectLastUpdatedDate": "12/26/2014 08:18",
+        "billings": [
+          {
+            "id": "30000003",
+
+            "name": "Client 30000001 Secret Billing Account 3"
+          }
+        ]
+      }
+    ]
+  },
+  "version": "v2"
+}

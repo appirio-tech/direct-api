@@ -1,0 +1,111 @@
+{
+  "id": "-52e0954c:14ae7f2b20b:-7fc7",
+  "result": {
+    "success": true,
+    "status": 200,
+    "metadata": {
+      "fields": null,
+      "totalCount": 268
+    },
+    "content": [
+      {
+        "accountId": null,
+        "id": "40005738",
+        "challengeName": "Client 40005502 Billing Account 2 Project 6 Idea Generation Contest 238",
+        "challengeType": "Idea Generation",
+        "clientName": "Client 40005502",
+        "clientId": 40005502,
+        "billingName": "Client 40005502 Billing Account 2",
+        "billingId": 40005504,
+        "directProjectName": "Client 40005502 Billing Account 2 Project 6",
+        "directProjectId": 40005524,
+        "challengeTechnologies": [],
+        "challengePlatforms": [],
+        "challengeStartDate": "08/01/2014 20:00",
+        "challengeEndDate": "08/20/2014 20:00",
+        "drPoints": 510,
+        "reviewCost": null,
+        "challengeFee": null,
+        "challengeStatus": "Cancelled - Zero Submissions",
+        "challengeCreator": "heffan",
+        "prizes": [
+          {
+            "accountId": null,
+            "id": "40006188",
+            "placement": 1,
+            "numberOfPrize": null,
+            "prizeAmount": 1700,
+            "prizeType": 15,
+            "challengeId": 40005738
+          },
+          {
+            "accountId": null,
+            "id": "40006189",
+            "placement": 2,
+            "numberOfPrize": null,
+            "prizeAmount": 1400,
+            "prizeType": 15,
+            "challengeId": 40005738
+          },
+          {
+            "accountId": null,
+            "id": "40006190",
+            "placement": 3,
+            "numberOfPrize": null,
+            "prizeAmount": 1100,
+            "prizeType": 15,
+            "challengeId": 40005738
+          }
+        ],
+        "checkPointPrizes": [],
+        "totalPrize": 4200,
+        "reliabilityBonus": 0
+      },
+      {
+        "accountId": null,
+        "id": "40005737",
+        "challengeName": "Client 40005502 Billing Account 2 Project 6 Content Creation Contest 237",
+        "challengeType": "Content Creation",
+        "clientName": "Client 40005502",
+        "clientId": 40005502,
+        "billingName": "Client 40005502 Billing Account 2",
+        "billingId": 40005504,
+        "directProjectName": "Client 40005502 Billing Account 2 Project 6",
+        "directProjectId": 40005524,
+        "challengeTechnologies": [],
+        "challengePlatforms": [],
+        "challengeStartDate": "08/01/2014 20:00",
+        "challengeEndDate": "08/20/2014 20:00",
+        "drPoints": 450,
+        "reviewCost": null,
+        "challengeFee": null,
+        "challengeStatus": "Cancelled - Zero Registrations",
+        "challengeCreator": "heffan",
+        "prizes": [
+          {
+            "accountId": null,
+            "id": "40006186",
+            "placement": 1,
+            "numberOfPrize": null,
+            "prizeAmount": 1000,
+            "prizeType": 15,
+            "challengeId": 40005737
+          },
+          {
+            "accountId": null,
+            "id": "40006187",
+            "placement": 2,
+            "numberOfPrize": null,
+            "prizeAmount": 500,
+            "prizeType": 15,
+            "challengeId": 40005737
+          }
+        ],
+        "checkPointPrizes": [],
+        "totalPrize": 1500,
+        "reliabilityBonus": 300
+      }
+    ]
+  },
+  "version": "v2"
+}

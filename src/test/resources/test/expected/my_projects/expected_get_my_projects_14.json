@@ -1,0 +1,142 @@
+{
+  "id": "23681f5f:14ac320cce2:-7ffa",
+  "result": {
+    "success": true,
+    "status": 200,
+    "metadata": {
+      "fields": null,
+      "totalCount": 8
+    },
+    "content": [
+      {
+        "id": "30000020",
+        "projectName": "Client 30000003 Billing Account 2 Project 2",
+        "projectStatusId": 1,
+        "projectStatusName": "Active",
+        "projectCreatedDate": "12/12/2014 20:12",
+        "projectCreatedBy": 124916,
+        "projectLastUpdatedDate": "12/17/2014 20:18",
+        "billings": [
+          {
+            "id": "30000007",
+
+            "name": "Client 30000003 Secret Billing Account 2"
+          }
+        ]
+      },
+      {
+        "id": "30000018",
+        "projectName": "ZZ Client 30000003 Billing Account 1 Project 3",
+        "projectStatusId": 4,
+        "projectStatusName": "Completed",
+        "projectCreatedDate": "12/14/2014 18:12",
+        "projectCreatedBy": 132456,
+        "projectLastUpdatedDate": "12/19/2014 06:18",
+        "billings": [
+          {
+            "id": "30000006",
+
+            "name": "Client 30000003 Billing Account 1"
+          }
+        ]
+      },
+      {
+        "id": "30000015",
+        "projectName": "Client 30000002 Billing Account 2 Project 3",
+        "projectStatusId": 1,
+        "projectStatusName": "Active",
+        "projectCreatedDate": "12/17/2014 15:12",
+        "projectCreatedBy": 132456,
+        "projectLastUpdatedDate": "12/21/2014 09:18",
+        "billings": [
+          {
+            "id": "30000005",
+
+            "name": "Client 30000002 Secret Billing Account 2"
+          }
+        ]
+      },
+      {
+        "id": "30000013",
+        "projectName": "Client 30000002 Billing Account 2 Project 1",
+        "projectStatusId": 4,
+        "projectStatusName": "Completed",
+        "projectCreatedDate": "12/19/2014 13:12",
+        "projectCreatedBy": 132458,
+        "projectLastUpdatedDate": "12/22/2014 19:18",
+        "billings": [
+          {
+            "id": "30000005",
+
+            "name": "Client 30000002 Secret Billing Account 2"
+          }
+        ]
+      },
+      {
+        "id": "30000010",
+        "projectName": "Client 30000002 Billing Account 1 Project 1",
+        "projectStatusId": 1,
+        "projectStatusName": "Active",
+        "projectCreatedDate": "12/22/2014 10:12",
+        "projectCreatedBy": 132458,
+        "projectLastUpdatedDate": "12/24/2014 22:18",
+        "billings": [
+          {
+            "id": "30000004",
+
+            "name": "Client 30000002 Billing Account 1"
+          }
+        ]
+      },
+      {
+        "id": "30000008",
+        "projectName": "Client 30000001 Billing Account 3 Good Project 2",
+        "projectStatusId": 4,
+        "projectStatusName": "Completed",
+        "projectCreatedDate": "12/24/2014 08:12",
+        "projectCreatedBy": 124916,
+        "projectLastUpdatedDate": "12/26/2014 08:18",
+        "billings": [
+          {
+            "id": "30000003",
+
+            "name": "Client 30000001 Secret Billing Account 3"
+          }
+        ]
+      },
+      {
+        "id": "30000005",
+        "projectName": "Client 30000001 Billing Account 2 Studio Design Project 2",
+        "projectStatusId": 1,
+        "projectStatusName": "Active",
+        "projectCreatedDate": "12/27/2014 05:12",
+        "projectCreatedBy": 124916,
+        "projectLastUpdatedDate": "12/28/2014 11:18",
+        "billings": [
+          {
+            "id": "30000002",
+
+            "name": "Client 30000001 Minor Billing Account 2"
+          }
+        ]
+      },
+      {
+        "id": "30000003",
+        "projectName": "Client 30000001 Billing Account 1 TopCoder Project 3",
+        "projectStatusId": 4,
+        "projectStatusName": "Completed",
+        "projectCreatedDate": "12/29/2014 03:12",
+        "projectCreatedBy": 132456,
+        "projectLastUpdatedDate": "12/29/2014 21:18",
+        "billings": [
+          {
+            "id": "30000001",
+
+            "name": "Client 30000001 Major Billing Account 1"
+          }
+        ]
+      }
+    ]
+  },
+  "version": "v2"
+}

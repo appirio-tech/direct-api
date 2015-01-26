@@ -1,0 +1,189 @@
+{
+  "id": "23681f5f:14ac320cce2:-7ffc",
+  "result": {
+    "success": true,
+    "status": 200,
+    "metadata": {
+      "fields": null,
+      "totalCount": 10
+    },
+    "content": [
+      {
+        "id": "30000021",
+        "projectName": "Client 30000003 Billing Account 2 Project 3",
+        "projectStatusId": 2,
+        "projectStatusName": "Inactive",
+        "projectCreatedDate": "12/11/2014 21:12",
+        "projectCreatedBy": 132456,
+        "projectLastUpdatedDate": "12/17/2014 03:18",
+        "billings": [
+          {
+            "id": "30000007",
+
+            "name": "Client 30000003 Secret Billing Account 2"
+          }
+        ]
+      },
+      {
+        "id": "30000020",
+        "projectName": "Client 30000003 Billing Account 2 Project 2",
+        "projectStatusId": 1,
+        "projectStatusName": "Active",
+        "projectCreatedDate": "12/12/2014 20:12",
+        "projectCreatedBy": 124916,
+        "projectLastUpdatedDate": "12/17/2014 20:18",
+        "billings": [
+          {
+            "id": "30000007",
+
+            "name": "Client 30000003 Secret Billing Account 2"
+          }
+        ]
+      },
+      {
+        "id": "30000019",
+        "projectName": "Client 30000003 Billing Account 2 Project 1",
+        "projectStatusId": 5,
+        "projectStatusName": "Draft",
+        "projectCreatedDate": "12/13/2014 19:12",
+        "projectCreatedBy": 132458,
+        "projectLastUpdatedDate": "12/18/2014 13:18",
+        "billings": [
+          {
+            "id": "30000007",
+
+            "name": "Client 30000003 Secret Billing Account 2"
+          }
+        ]
+      },
+      {
+        "id": "30000015",
+        "projectName": "Client 30000002 Billing Account 2 Project 3",
+        "projectStatusId": 1,
+        "projectStatusName": "Active",
+        "projectCreatedDate": "12/17/2014 15:12",
+        "projectCreatedBy": 132456,
+        "projectLastUpdatedDate": "12/21/2014 09:18",
+        "billings": [
+          {
+            "id": "30000005",
+
+            "name": "Client 30000002 Secret Billing Account 2"
+          }
+        ]
+      },
+      {
+        "id": "30000013",
+        "projectName": "Client 30000002 Billing Account 2 Project 1",
+        "projectStatusId": 4,
+        "projectStatusName": "Completed",
+        "projectCreatedDate": "12/19/2014 13:12",
+        "projectCreatedBy": 132458,
+        "projectLastUpdatedDate": "12/22/2014 19:18",
+        "billings": [
+          {
+            "id": "30000005",
+
+            "name": "Client 30000002 Secret Billing Account 2"
+          }
+        ]
+      },
+      {
+        "id": "30000011",
+        "projectName": "Client 30000002 Billing Account 1 Project 2",
+        "projectStatusId": 2,
+        "projectStatusName": "Inactive",
+        "projectCreatedDate": "12/21/2014 11:12",
+        "projectCreatedBy": 124916,
+        "projectLastUpdatedDate": "12/24/2014 05:18",
+        "billings": [
+          {
+            "id": "30000004",
+
+            "name": "Client 30000002 Billing Account 1"
+          },
+          {
+            "id": "30000005",
+
+            "name": "Client 30000002 Secret Billing Account 2"
+          }
+        ]
+      },
+      {
+        "id": "30000009",
+        "projectName": "Client 30000001 Billing Account 3 Bad Project 3",
+        "projectStatusId": 5,
+        "projectStatusName": "Draft",
+        "projectCreatedDate": "12/23/2014 09:12",
+        "projectCreatedBy": 132456,
+        "projectLastUpdatedDate": "12/25/2014 15:18",
+        "billings": [
+          {
+            "id": "30000003",
+
+            "name": "Client 30000001 Secret Billing Account 3"
+          }
+        ]
+      },
+      {
+        "id": "30000008",
+        "projectName": "Client 30000001 Billing Account 3 Good Project 2",
+        "projectStatusId": 4,
+        "projectStatusName": "Completed",
+        "projectCreatedDate": "12/24/2014 08:12",
+        "projectCreatedBy": 124916,
+        "projectLastUpdatedDate": "12/26/2014 08:18",
+        "billings": [
+          {
+            "id": "30000003",
+
+            "name": "Client 30000001 Secret Billing Account 3"
+          }
+        ]
+      },
+      {
+        "id": "30000007",
+        "projectName": "Client 30000001 Billing Account 3 Web API Project 1",
+        "projectStatusId": 3,
+        "projectStatusName": "Cancelled",
+        "projectCreatedDate": "12/25/2014 07:12",
+        "projectCreatedBy": 132458,
+        "projectLastUpdatedDate": "12/27/2014 01:18",
+        "billings": [
+          {
+            "id": "30000003",
+
+            "name": "Client 30000001 Secret Billing Account 3"
+          }
+        ]
+      },
+      {
+        "id": "30000001",
+        "projectName": "Client 30000001 Billing Account 1 Web Application Project 1",
+        "projectStatusId": 2,
+        "projectStatusName": "Inactive",
+        "projectCreatedDate": "12/31/2014 01:12",
+        "projectCreatedBy": 132458,
+        "projectLastUpdatedDate": "12/31/2014 07:18",
+        "billings": [
+          {
+            "id": "30000001",
+
+            "name": "Client 30000001 Major Billing Account 1"
+          },
+          {
+            "id": "30000002",
+
+            "name": "Client 30000001 Minor Billing Account 2"
+          },
+          {
+            "id": "30000003",
+
+            "name": "Client 30000001 Secret Billing Account 3"
+          }
+        ]
+      }
+    ]
+  },
+  "version": "v2"
+}

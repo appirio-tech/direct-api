@@ -1,0 +1,59 @@
+{
+  "id": "31a573b5:14abf72c2f1:-7fe2",
+  "result": {
+    "success": true,
+    "status": 200,
+    "metadata": null,
+    "content": [
+      {
+        "id": "30000007",
+        "projectName": "Client 30000001 Billing Account 3 Web API Project 1",
+        "projectStatusId": 3,
+        "projectStatusName": "Cancelled",
+        "projectCreatedDate": "12/25/2014 07:12",
+        "projectCreatedBy": 132458,
+        "projectLastUpdatedDate": "12/27/2014 01:18",
+        "billings": [
+          {
+            "id": "30000003",
+
+            "name": "Client 30000001 Secret Billing Account 3"
+          }
+        ]
+      },
+      {
+        "id": "30000006",
+        "projectName": "Client 30000001 Billing Account 2 REST API Project 3",
+        "projectStatusId": 2,
+        "projectStatusName": "Inactive",
+        "projectCreatedDate": "12/26/2014 06:12",
+        "projectCreatedBy": 132456,
+        "projectLastUpdatedDate": "12/27/2014 18:18",
+        "billings": [
+          {
+            "id": "30000002",
+
+            "name": "Client 30000001 Minor Billing Account 2"
+          }
+        ]
+      },
+      {
+        "id": "30000002",
+        "projectName": "Client 30000001 Billing Account 1 Mobile Project 2",
+        "projectStatusId": 3,
+        "projectStatusName": "Cancelled",
+        "projectCreatedDate": "12/30/2014 02:12",
+        "projectCreatedBy": 124916,
+        "projectLastUpdatedDate": "12/30/2014 14:18",
+        "billings": [
+          {
+            "id": "30000001",
+
+            "name": "Client 30000001 Major Billing Account 1"
+          }
+        ]
+      }
+    ]
+  },
+  "version": "v2"
+}

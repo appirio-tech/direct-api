@@ -1,0 +1,69 @@
+{
+  "id": "31a573b5:14abf72c2f1:-7fdb",
+  "result": {
+    "success": true,
+    "status": 200,
+    "metadata": null,
+    "content": [
+      {
+        "id": "30000003",
+        "projectName": "Client 30000001 Billing Account 1 TopCoder Project 3",
+        "projectStatusId": 4,
+        "projectStatusName": "Completed",
+        "projectCreatedDate": "12/29/2014 03:12",
+        "projectCreatedBy": 132456,
+        "projectLastUpdatedDate": "12/29/2014 21:18",
+        "billings": [
+          {
+            "id": "30000001",
+
+            "name": "Client 30000001 Major Billing Account 1"
+          }
+        ]
+      },
+      {
+        "id": "30000002",
+        "projectName": "Client 30000001 Billing Account 1 Mobile Project 2",
+        "projectStatusId": 3,
+        "projectStatusName": "Cancelled",
+        "projectCreatedDate": "12/30/2014 02:12",
+        "projectCreatedBy": 124916,
+        "projectLastUpdatedDate": "12/30/2014 14:18",
+        "billings": [
+          {
+            "id": "30000001",
+
+            "name": "Client 30000001 Major Billing Account 1"
+          }
+        ]
+      },
+      {
+        "id": "30000001",
+        "projectName": "Client 30000001 Billing Account 1 Web Application Project 1",
+        "projectStatusId": 2,
+        "projectStatusName": "Inactive",
+        "projectCreatedDate": "12/31/2014 01:12",
+        "projectCreatedBy": 132458,
+        "projectLastUpdatedDate": "12/31/2014 07:18",
+        "billings": [
+          {
+            "id": "30000001",
+
+            "name": "Client 30000001 Major Billing Account 1"
+          },
+          {
+            "id": "30000002",
+
+            "name": "Client 30000001 Minor Billing Account 2"
+          },
+          {
+            "id": "30000003",
+
+            "name": "Client 30000001 Secret Billing Account 3"
+          }
+        ]
+      }
+    ]
+  },
+  "version": "v2"
+}

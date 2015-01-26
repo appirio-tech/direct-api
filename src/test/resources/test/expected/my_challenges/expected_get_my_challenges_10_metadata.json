@@ -1,0 +1,73 @@
+{
+  "id": "-52e0954c:14ae7f2b20b:-7fdc",
+  "result": {
+    "success": true,
+    "status": 200,
+    "metadata": {
+      "fields": null,
+      "totalCount": 1
+    },
+    "content": [
+      {
+        "accountId": null,
+        "id": "40005619",
+        "challengeName": "Client 40005501 Billing Account 2 Project 6 RIA Build Contest 119",
+        "challengeType": "RIA Build",
+        "clientName": "Client 40005501",
+        "clientId": 40005501,
+        "billingName": "Client 40005501 Billing Account 2",
+        "billingId": 40005502,
+        "directProjectName": "Client 40005501 Billing Account 2 Project 6",
+        "directProjectId": 40005512,
+        "challengeTechnologies": [
+          "Servlet"
+        ],
+        "challengePlatforms": [
+          "Heroku",
+          "NodeJS"
+        ],
+        "challengeStartDate": "08/01/2014 20:00",
+        "challengeEndDate": "08/20/2014 20:00",
+        "drPoints": 450,
+        "reviewCost": null,
+        "challengeFee": null,
+        "challengeStatus": "Cancelled - Client Request",
+        "challengeCreator": "heffan",
+        "prizes": [
+          {
+            "accountId": null,
+            "id": "40005843",
+            "placement": 1,
+            "numberOfPrize": null,
+            "prizeAmount": 1000,
+            "prizeType": 15,
+            "challengeId": 40005619
+          },
+          {
+            "accountId": null,
+            "id": "40005844",
+            "placement": 2,
+            "numberOfPrize": null,
+            "prizeAmount": 500,
+            "prizeType": 15,
+            "challengeId": 40005619
+          }
+        ],
+        "checkPointPrizes": [
+          {
+            "accountId": null,
+            "id": "40005845",
+            "placement": null,
+            "numberOfPrize": 1,
+            "prizeAmount": 60,
+            "prizeType": 14,
+            "challengeId": 40005619
+          }
+        ],
+        "totalPrize": 1560,
+        "reliabilityBonus": 300
+      }
+    ]
+  },
+  "version": "v2"
+}

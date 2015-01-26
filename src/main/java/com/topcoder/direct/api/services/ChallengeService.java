@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014 TopCoder Inc., All Rights Reserved.
+ * Copyright (C) 2014 - 2015 TopCoder Inc., All Rights Reserved.
  */
 package com.topcoder.direct.api.services;
 
@@ -26,7 +26,6 @@ import com.topcoder.direct.dao.ChallengeDAO;
 import com.topcoder.direct.dao.UserDAO;
 import com.topcoder.direct.exception.BadRequestException;
 import com.topcoder.direct.exception.ServerInternalException;
-import com.topcoder.direct.util.Helper;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -45,17 +44,24 @@ import java.util.List;
 import java.util.Map;
 
 import static com.topcoder.direct.util.Helper.isNull;
+import static com.topcoder.direct.util.ServiceHelper.parseFilterValueToValueList;
+import static com.topcoder.direct.util.ServiceHelper.populateLimitQuery;
 
 /**
  * This is the service implementation for the My Challenges API.
- *
+ * <p/>
  * <p>
  * Version 1.1 (TopCoder Direct API - Add New Date Filters for Challenges API)
  * - Add (startDateFrom, startDateTo), (endDateFrom, endDateTo) filters.
  * </p>
+ * <p/>
+ * <p>
+ * Version 1.2 (TopCoder Direct API - Project Retrieval API)
+ * - Refactor the common methods used by all service implementation out into {@link #com.topcoder.direct.util.ServiceHelper}
+ * </p>
  *
- * @author j3_guile, Veve
- * @version 1.1
+ * @author j3_guile, Veve, GreatKevin
+ * @version 1.2 (TopCoder Direct API - Project Retrieval API)
  * @since 1.0 (Topcoder Direct API - My Challenges API v1.0)
  */
 @Service
@@ -118,13 +124,13 @@ public class ChallengeService extends AbstractMetadataService implements RESTQue
      * The technology filter.
      */
     private static final String TECHNOLOGY_FILTER = " AND EXISTS (SELECT DISTINCT 1 FROM comp_technology ct "
-        + "WHERE ct.comp_vers_id = pi1.value AND ct.technology_type_id IN (:technology_ids))\n";
+            + "WHERE ct.comp_vers_id = pi1.value AND ct.technology_type_id IN (:technology_ids))\n";
 
     /**
      * The platform filter.
      */
     private static final String PLATFORM_FILTER = " AND EXISTS (SELECT 1 FROM project_platform pp "
-        + "WHERE pp.project_platform_id IN (:platform_ids) AND p.project_id = pp.project_id)\n";
+            + "WHERE pp.project_platform_id IN (:platform_ids) AND p.project_id = pp.project_id)\n";
 
     /**
      * The direct project id filter.
@@ -243,7 +249,7 @@ public class ChallengeService extends AbstractMetadataService implements RESTQue
 
     /**
      * Not implemented.
-     *
+     * <p/>
      * http://apps.topcoder.com/forums/?module=Thread&threadID=828408&start=0
      *
      * @param selector not used
@@ -259,12 +265,12 @@ public class ChallengeService extends AbstractMetadataService implements RESTQue
      * Retrieves challenges using the provided specification.
      *
      * @param request the servlet request
-     * @param query the filter and output specification
+     * @param query   the filter and output specification
      * @return the challenge data requested, may be empty, never null
-     * @throws BadRequestException for any validation failure in the request data
-     * @throws UnauthorizedException if the request principal is not logged in as a member or admin roles
+     * @throws BadRequestException     for any validation failure in the request data
+     * @throws UnauthorizedException   if the request principal is not logged in as a member or admin roles
      * @throws ServerInternalException for IOExceptions caught from the DAO
-     * Note: all RuntimeExceptions are propagated to the framework exception handlers.
+     *                                 Note: all RuntimeExceptions are propagated to the framework exception handlers.
      */
     public List<Challenge> handleGet(HttpServletRequest request, QueryParameter query) {
         DirectAuthenticationToken identity = SecurityUtil.getAuthentication(request);
@@ -343,32 +349,6 @@ public class ChallengeService extends AbstractMetadataService implements RESTQue
     }
 
     /**
-     * Populates the SQL parameters for pagination. Uses LimitQuery.
-     *
-     * @param query The query parameters of request.
-     * @param sqlParameters Current SQL parameters.
-     */
-    private void populateLimitQuery(QueryParameter query, Map<String, Object> sqlParameters) {
-        LimitQuery limitQuery = query.getLimitQuery();
-        int offset = 0;
-        int pageSize = 10;
-
-        if (limitQuery != null) {
-            if (limitQuery.getLimit() != null) {
-                pageSize = limitQuery.getLimit();
-                if (pageSize == -1) {
-                    pageSize = Integer.MAX_VALUE;
-                }
-            }
-            if (limitQuery.getOffset() != null) {
-                offset = limitQuery.getOffset();
-            }
-        }
-        sqlParameters.put("page_size", pageSize);
-        sqlParameters.put("first_row_index", offset);
-    }
-
-    /**
      * Merges the corresponding Prizes to Challenges.
      *
      * @param challenges The challenges to be filled with Prizes.
@@ -439,21 +419,21 @@ public class ChallengeService extends AbstractMetadataService implements RESTQue
      * Validate input parameters for my created challenges.
      *
      * @param userId the current user Id
-     * @param query the query.
+     * @param query  the query.
      * @throws BadRequestException if the any of the query parameters are invalid
-     * @throws IOException When an error occurs while getting user handle of logged in user
+     * @throws IOException         When an error occurs while getting user handle of logged in user
      */
     private void validateQuery(Integer userId, QueryParameter query) throws IOException {
         FilterParameter filter = query.getFilter();
         if (filter.contains("type")) {
-            List<String> values = toValueList(filter.get("type"), true);
+            List<String> values = parseFilterValueToValueList(filter.get("type"), true, LOG);
             if (!ALLOWED_TYPE.containsAll(values)) {
                 throw new BadRequestException("Invalid type. One of [\"active\", \"past\", \"draft\"] expected.");
             }
         }
 
         if (filter.contains("creator")) {
-            List<String> values = toValueList(filter.get("creator"), false);
+            List<String> values = parseFilterValueToValueList(filter.get("creator"), false, LOG);
             // we currently only allow the current user for this filter
             // http://apps.topcoder.com/forums/?module=Thread&threadID=828530&start=0
             String currentHandle = userDAO.getUserHandle(userId);
@@ -465,7 +445,7 @@ public class ChallengeService extends AbstractMetadataService implements RESTQue
         }
 
         if (filter.contains("directProjectId")) {
-            List<String> values = toValueList(filter.get("directProjectId"), false);
+            List<String> values = parseFilterValueToValueList(filter.get("directProjectId"), false, LOG);
             for (String val : values) {
                 try {
                     int id = Integer.parseInt(val);
@@ -479,7 +459,7 @@ public class ChallengeService extends AbstractMetadataService implements RESTQue
         }
 
         if (filter.contains("clientId")) {
-            List<String> values = toValueList(filter.get("clientId"), false);
+            List<String> values = parseFilterValueToValueList(filter.get("clientId"), false, LOG);
             for (String val : values) {
                 try {
                     Integer.parseInt(val);
@@ -490,7 +470,7 @@ public class ChallengeService extends AbstractMetadataService implements RESTQue
         }
 
         if (filter.contains("billingId")) {
-            List<String> values = toValueList(filter.get("billingId"), false);
+            List<String> values = parseFilterValueToValueList(filter.get("billingId"), false, LOG);
             for (String val : values) {
                 try {
                     Integer.parseInt(val);
@@ -501,7 +481,7 @@ public class ChallengeService extends AbstractMetadataService implements RESTQue
         }
 
         if (filter.contains("startDateFrom")) {
-            String startDateFrom = toValueList(filter.get("startDateFrom"), true).get(0);
+            String startDateFrom = parseFilterValueToValueList(filter.get("startDateFrom"), true, LOG).get(0);
             try {
                 DATE_FORMAT.parse(startDateFrom);
             } catch (ParseException pe) {
@@ -510,7 +490,7 @@ public class ChallengeService extends AbstractMetadataService implements RESTQue
         }
 
         if (filter.contains("startDateTo")) {
-            String startDateTo = toValueList(filter.get("startDateTo"), true).get(0);
+            String startDateTo = parseFilterValueToValueList(filter.get("startDateTo"), true, LOG).get(0);
             try {
                 DATE_FORMAT.parse(startDateTo);
             } catch (ParseException pe) {
@@ -519,7 +499,7 @@ public class ChallengeService extends AbstractMetadataService implements RESTQue
         }
 
         if (filter.contains("endDateFrom")) {
-            String endDateFrom = toValueList(filter.get("endDateFrom"), true).get(0);
+            String endDateFrom = parseFilterValueToValueList(filter.get("endDateFrom"), true, LOG).get(0);
             try {
                 DATE_FORMAT.parse(endDateFrom);
             } catch (ParseException pe) {
@@ -528,7 +508,7 @@ public class ChallengeService extends AbstractMetadataService implements RESTQue
         }
 
         if (filter.contains("endDateTo")) {
-            String endDateTo = toValueList(filter.get("endDateTo"), true).get(0);
+            String endDateTo = parseFilterValueToValueList(filter.get("endDateTo"), true, LOG).get(0);
             try {
                 DATE_FORMAT.parse(endDateTo);
             } catch (ParseException pe) {
@@ -556,14 +536,14 @@ public class ChallengeService extends AbstractMetadataService implements RESTQue
     /**
      * Get the challenge filters to be used in the query and set the appropriate sql parameters as well.
      *
-     * @param identity the current user
-     * @param query The filters and limits to be used in the query.
+     * @param identity      the current user
+     * @param query         The filters and limits to be used in the query.
      * @param sqlParameters The sql parameters object that will be used when execute query.
      * @return The list of filter content that need to add into query manually.
-     * @exception IOException If something went wrong when read the query.
+     * @throws IOException If something went wrong when read the query.
      */
     private List<String> getCreatorChallengeFilters(DirectAuthenticationToken identity, QueryParameter query,
-        Map<String, Object> sqlParameters) throws IOException {
+                                                    Map<String, Object> sqlParameters) throws IOException {
         List<String> filterToAdd = new ArrayList<String>();
 
         filterToAdd.add(CREATOR_FILTER);
@@ -576,20 +556,20 @@ public class ChallengeService extends AbstractMetadataService implements RESTQue
     /**
      * Get the challenge filters to be used in the my challenges query and set the appropriate sql parameters as well.
      *
-     * @param query The filters and limits to be used in the query.
+     * @param query         The filters and limits to be used in the query.
      * @param sqlParameters The sql parameters object that will be used when execute query.
      * @return The list of filter content that need to add into query manually.
-     * @exception IOException If something went wrong when read the query.
+     * @throws IOException If something went wrong when read the query.
      */
     private List<String> getMyChallengeFilters(QueryParameter query,
-                                                    Map<String, Object> sqlParameters) throws IOException {
+                                               Map<String, Object> sqlParameters) throws IOException {
 
         FilterParameter filter = query.getFilter();
         List<String> filterToAdd = new ArrayList<String>();
 
         if (filter.contains("challengeType")) {
             // Get the challenge type id and insert into sqlParameters.
-            List<String> challengeTypes = toValueList(filter.get("challengeType"), false);
+            List<String> challengeTypes = parseFilterValueToValueList(filter.get("challengeType"), false, LOG);
             List<Integer> challengeTypeIds = catalogDAO.getIds("challenge_type", challengeTypes, "challenge_types");
             if (challengeTypeIds.isEmpty()) {
                 challengeTypeIds = NO_MATCHED_LOOKUP;
@@ -600,7 +580,7 @@ public class ChallengeService extends AbstractMetadataService implements RESTQue
         }
 
         if (filter.contains("challengeStatus")) {
-            List<String> status = toValueList(filter.get("challengeStatus"), true);
+            List<String> status = parseFilterValueToValueList(filter.get("challengeStatus"), true, LOG);
             if (!status.isEmpty()) {
                 List<String> csFilters = new ArrayList<String>();
                 int index = 0;
@@ -627,7 +607,7 @@ public class ChallengeService extends AbstractMetadataService implements RESTQue
         }
 
         if (filter.contains("type")) {
-            List<String> type = toValueList(filter.get("type"), true);
+            List<String> type = parseFilterValueToValueList(filter.get("type"), true, LOG);
             List<Integer> typeIds = new ArrayList<Integer>();
             if (type.contains(ACTIVE_PROJECT_STATUS)) {
                 typeIds.add(1);
@@ -646,7 +626,7 @@ public class ChallengeService extends AbstractMetadataService implements RESTQue
         }
 
         if (filter.contains("challengeTechnologies")) {
-            List<String> technologies = toValueList(filter.get("challengeTechnologies"), true);
+            List<String> technologies = parseFilterValueToValueList(filter.get("challengeTechnologies"), true, LOG);
             List<Integer> technologyIds = catalogDAO.getIds("technology", technologies, "technologies");
             if (technologyIds.isEmpty()) {
                 technologyIds = NO_MATCHED_LOOKUP;
@@ -657,7 +637,7 @@ public class ChallengeService extends AbstractMetadataService implements RESTQue
         }
 
         if (filter.contains("challengePlatforms")) {
-            List<String> platforms = toValueList(filter.get("challengePlatforms"), true);
+            List<String> platforms = parseFilterValueToValueList(filter.get("challengePlatforms"), true, LOG);
             List<Integer> platformsIds = catalogDAO.getIds("platform", platforms, "platforms");
             if (platformsIds.isEmpty()) {
                 platformsIds = NO_MATCHED_LOOKUP;
@@ -668,7 +648,7 @@ public class ChallengeService extends AbstractMetadataService implements RESTQue
         }
 
         if (filter.contains("directProjectId")) {
-            List<String> values = toValueList(filter.get("directProjectId"), true);
+            List<String> values = parseFilterValueToValueList(filter.get("directProjectId"), true, LOG);
             List<Integer> projectIds = new ArrayList<Integer>();
             for (String id : values) {
                 projectIds.add(Integer.valueOf(id));
@@ -678,15 +658,15 @@ public class ChallengeService extends AbstractMetadataService implements RESTQue
         }
 
         if (filter.contains("directProjectName")) {
-            List<String> values = toValueList(filter.get("directProjectName"), true);
+            List<String> values = parseFilterValueToValueList(filter.get("directProjectName"), true, LOG);
             if (!values.isEmpty()) {
                 List<String> pnameFilters = new ArrayList<String>();
                 int index = 0;
                 for (String value : values) {
                     sqlParameters.put("direct_project_name" + index, "%" + value + "%");
                     pnameFilters.add("EXISTS (SELECT 1 FROM tc_direct_project tdp "
-                                             + "WHERE tdp.project_id = p.tc_direct_project_id AND LOWER(tdp.name) "
-                                             + "LIKE (:direct_project_name" + index + "))");
+                            + "WHERE tdp.project_id = p.tc_direct_project_id AND LOWER(tdp.name) "
+                            + "LIKE (:direct_project_name" + index + "))");
                     index++;
                 }
                 filterToAdd.add("AND (" + StringUtils.join(pnameFilters, " OR ") + ") \n");
@@ -694,7 +674,7 @@ public class ChallengeService extends AbstractMetadataService implements RESTQue
         }
 
         if (filter.contains("clientId")) {
-            List<String> values = toValueList(filter.get("clientId"), true);
+            List<String> values = parseFilterValueToValueList(filter.get("clientId"), true, LOG);
             List<Integer> clientIds = new ArrayList<Integer>();
             for (String id : values) {
                 clientIds.add(Integer.valueOf(id));
@@ -704,7 +684,7 @@ public class ChallengeService extends AbstractMetadataService implements RESTQue
         }
 
         if (filter.contains("billingId")) {
-            List<String> values = toValueList(filter.get("billingId"), true);
+            List<String> values = parseFilterValueToValueList(filter.get("billingId"), true, LOG);
             List<Integer> billingIds = new ArrayList<Integer>();
             for (String id : values) {
                 billingIds.add(Integer.valueOf(id));
@@ -714,13 +694,12 @@ public class ChallengeService extends AbstractMetadataService implements RESTQue
         }
 
 
-
         try {
 
             boolean startDateFilterAdded = false;
 
             if (filter.contains("startDateFrom")) {
-                String strDateFrom = toValueList(filter.get("startDateFrom"), true).get(0);
+                String strDateFrom = parseFilterValueToValueList(filter.get("startDateFrom"), true, LOG).get(0);
 
                 sqlParameters.put("startDateFrom", DATE_FORMAT.parse(strDateFrom));
 
@@ -730,7 +709,7 @@ public class ChallengeService extends AbstractMetadataService implements RESTQue
                 }
 
                 // if filter not added, add it
-                if(!startDateFilterAdded) {
+                if (!startDateFilterAdded) {
                     filterToAdd.add(START_DATE_FILTER);
                     startDateFilterAdded = true;
                 }
@@ -738,7 +717,7 @@ public class ChallengeService extends AbstractMetadataService implements RESTQue
             }
 
             if (filter.contains("startDateTo")) {
-                String startDateTo = toValueList(filter.get("startDateTo"), true).get(0);
+                String startDateTo = parseFilterValueToValueList(filter.get("startDateTo"), true, LOG).get(0);
 
                 sqlParameters.put("startDateTo", processEndDate(DATE_FORMAT.parse(startDateTo)));
 
@@ -748,7 +727,7 @@ public class ChallengeService extends AbstractMetadataService implements RESTQue
                 }
 
                 // if filter not added, add it
-                if(!startDateFilterAdded) {
+                if (!startDateFilterAdded) {
                     filterToAdd.add(START_DATE_FILTER);
                     startDateFilterAdded = true;
                 }
@@ -763,7 +742,7 @@ public class ChallengeService extends AbstractMetadataService implements RESTQue
             boolean endDateFilterAdded = false;
 
             if (filter.contains("endDateFrom")) {
-                String endDateFrom = toValueList(filter.get("endDateFrom"), true).get(0);
+                String endDateFrom = parseFilterValueToValueList(filter.get("endDateFrom"), true, LOG).get(0);
 
                 sqlParameters.put("endDateFrom", DATE_FORMAT.parse(endDateFrom));
 
@@ -773,7 +752,7 @@ public class ChallengeService extends AbstractMetadataService implements RESTQue
                 }
 
                 // if filter not added, add it
-                if(!endDateFilterAdded) {
+                if (!endDateFilterAdded) {
                     filterToAdd.add(END_DATE_FILTER);
                     endDateFilterAdded = true;
                 }
@@ -781,7 +760,7 @@ public class ChallengeService extends AbstractMetadataService implements RESTQue
             }
 
             if (filter.contains("endDateTo")) {
-                String endDateTo = toValueList(filter.get("endDateTo"), true).get(0);
+                String endDateTo = parseFilterValueToValueList(filter.get("endDateTo"), true, LOG).get(0);
 
                 sqlParameters.put("endDateTo", processEndDate(DATE_FORMAT.parse(endDateTo)));
 
@@ -791,7 +770,7 @@ public class ChallengeService extends AbstractMetadataService implements RESTQue
                 }
 
                 // if filter not added, add it
-                if(!endDateFilterAdded) {
+                if (!endDateFilterAdded) {
                     filterToAdd.add(END_DATE_FILTER);
                     endDateFilterAdded = true;
                 }
@@ -810,7 +789,6 @@ public class ChallengeService extends AbstractMetadataService implements RESTQue
      *
      * @param endDate
      * @return the processed end date.
-     *
      * @since 1.1
      */
     private Date processEndDate(Date endDate) {
@@ -828,7 +806,7 @@ public class ChallengeService extends AbstractMetadataService implements RESTQue
      * Gets the metadata
      *
      * @param request the http servlet request.
-     * @param query the QueryParameter instance.
+     * @param query   the QueryParameter instance.
      * @return the metadata
      * @throws Exception if any error.
      */
@@ -867,42 +845,5 @@ public class ChallengeService extends AbstractMetadataService implements RESTQue
         }
 
         return metadata;
-    }
-
-    /**
-     * Strips of "in()" from the given request parameter and parses it as a list. If it is not a list then a single
-     * element will be used
-     *
-     * Per spec:
-     * 2) filedValue(sic) can contain multiple values using in() format {fieldName}=in({fieldValue1},{fieldValue1})
-     *
-     * @param object the parameter object
-     * @param forceLowerCase converts the value to lower case
-     * @return the list of parsed values
-     */
-    private List<String> toValueList(Object object, boolean forceLowerCase) {
-        List<String> values = new ArrayList<String>();
-        if (object != null) {
-            String val = object.toString().trim();
-            if (forceLowerCase) {
-                val = val.toLowerCase();
-            }
-
-            String tmp = val.toLowerCase().replaceAll("\\s", ""); // to ignore any space between IN and (
-            if (val.toLowerCase().startsWith("in") && tmp.startsWith("in(") && tmp.endsWith(")")) {
-                // multiple value format!
-                val = val.substring(val.indexOf("(") + 1, val.length() - 1);
-
-                // each item can vary types, we can't just split it based on ',' because it might be a quoted string
-                for (String string : Helper.unQuoteAndSplit(val)) {
-                    values.add(string);
-                }
-            } else {
-                // single value format
-                values.add(Helper.unQuoteString(val));
-            }
-        }
-        LOG.debug("Parsed filter values: " + values);
-        return values;
     }
 }

@@ -1,0 +1,29 @@
+{
+  "id": "23681f5f:14ac320cce2:-7ffa",
+  "result": {
+    "success": true,
+    "status": 200,
+    "metadata": {
+      "fields": null,
+      "totalCount": 1
+    },
+    "content": [
+      {
+        "id": "30000020",
+        "projectName": "Client 30000003 Billing Account 2 Project 2",
+        "projectStatusId": 1,
+        "projectStatusName": "Active",
+        "projectCreatedDate": "12/12/2014 20:12",
+        "projectCreatedBy": 124916,
+        "projectLastUpdatedDate": "12/17/2014 20:18",
+        "billings": [
+          {
+            "id": "30000007",
+            "name": "Client 30000003 Secret Billing Account 2"
+          }
+        ]
+      }
+    ]
+  },
+  "version": "v2"
+}

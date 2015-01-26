@@ -1,20 +1,25 @@
 /*
- * Copyright (C) 2014 TopCoder Inc., All Rights Reserved.
+ * Copyright (C) 2014 - 2015 TopCoder Inc., All Rights Reserved.
  */
 package com.topcoder.direct.api.model;
 
-import java.util.List;
-
-import org.springframework.stereotype.Component;
-
 import com.appirio.tech.core.api.v2.model.AbstractIdResource;
 import com.appirio.tech.core.api.v2.model.annotation.ApiMapping;
+import org.codehaus.jackson.annotate.JsonIgnore;
+import org.springframework.stereotype.Component;
+
+import java.util.List;
 
 /**
- * Represents member prizes for a challenge.
+ * Represents the challenge model.
  *
- * @author j3_guile
- * @version 1.0
+ * <p>
+ * Version 1.1 (TopCoder Direct API - Project Retrieval API)
+ * - Add @JsonIgnore to hide {@link #getResourcePath()} from json result.
+ * </p>
+ *
+ * @author j3_guile, GreatKevin
+ * @version 1.1
  */
 @Component
 public class Challenge extends AbstractIdResource {
@@ -120,6 +125,7 @@ public class Challenge extends AbstractIdResource {
      *
      * @return {@value #RESOURCE_PATH}
      */
+    @JsonIgnore
     @ApiMapping(visible = false)
     public String getResourcePath() {
         return RESOURCE_PATH;

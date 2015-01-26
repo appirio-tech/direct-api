@@ -1,0 +1,4 @@
+SELECT
+COUNT(*) as total_count
+FROM tc_direct_project tdp
+WHERE 1 = 1

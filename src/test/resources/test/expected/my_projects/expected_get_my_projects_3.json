@@ -1,0 +1,59 @@
+{
+  "id": "31a573b5:14abf72c2f1:-7fdf",
+  "result": {
+    "success": true,
+    "status": 200,
+    "metadata": null,
+    "content": [
+      {
+        "id": "30000018",
+        "projectName": "ZZ Client 30000003 Billing Account 1 Project 3",
+        "projectStatusId": 4,
+        "projectStatusName": "Completed",
+        "projectCreatedDate": "12/14/2014 18:12",
+        "projectCreatedBy": 132456,
+        "projectLastUpdatedDate": "12/19/2014 06:18",
+        "billings": [
+          {
+            "id": "30000006",
+
+            "name": "Client 30000003 Billing Account 1"
+          }
+        ]
+      },
+      {
+        "id": "30000014",
+        "projectName": "Client 30000002 Billing Account 2 Project 2",
+        "projectStatusId": 5,
+        "projectStatusName": "Draft",
+        "projectCreatedDate": "12/18/2014 14:12",
+        "projectCreatedBy": 124916,
+        "projectLastUpdatedDate": "12/22/2014 02:18",
+        "billings": [
+          {
+            "id": "30000005",
+
+            "name": "Client 30000002 Secret Billing Account 2"
+          }
+        ]
+      },
+      {
+        "id": "30000005",
+        "projectName": "Client 30000001 Billing Account 2 Studio Design Project 2",
+        "projectStatusId": 1,
+        "projectStatusName": "Active",
+        "projectCreatedDate": "12/27/2014 05:12",
+        "projectCreatedBy": 124916,
+        "projectLastUpdatedDate": "12/28/2014 11:18",
+        "billings": [
+          {
+            "id": "30000002",
+
+            "name": "Client 30000001 Minor Billing Account 2"
+          }
+        ]
+      }
+    ]
+  },
+  "version": "v2"
+}

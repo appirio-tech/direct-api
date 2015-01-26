@@ -1,17 +1,9 @@
 /*
- * Copyright (C) 2014 TopCoder Inc., All Rights Reserved.
+ * Copyright (C) 2014 - 2015 TopCoder Inc., All Rights Reserved.
  */
 package com.topcoder.direct.api.services;
 
-import static org.hamcrest.Matchers.is;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
-
-import java.io.IOException;
-import java.util.HashMap;
-import java.util.Map;
-
+import com.topcoder.direct.rest.BaseDirectAPITest;
 import org.hamcrest.Matchers;
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -20,18 +12,41 @@ import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
-import org.springframework.test.web.servlet.ResultActions;
-import org.springframework.test.web.servlet.ResultMatcher;
 
-import com.topcoder.direct.rest.BaseDirectAPITest;
+import java.io.IOException;
+import java.lang.reflect.Method;
+import java.util.HashMap;
+import java.util.Map;
+
+import static org.hamcrest.Matchers.is;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 /**
  * <p>
  * This tests ChallengeService class.
  * </p>
  *
- * @author TCSASSEMBLER
- * @version 1.0
+ *
+ * <p>
+ * Version 1.1 (TopCoder Direct API - Project Retrieval API)
+ * - Refactor the common methods to BaseDirectAPITest.
+ *
+ * <p>
+ * Version 1.2 (Direct API - Fix Challenges API Integration Tests)
+ * <ul>
+ *     <li>Fixed the existing test cases</li>
+ *     <li>Updated the existing test cases to test metadata</li>
+ *     <li>Added test cases for metadata </li>
+ *     <li>Added test cases for start/end date filters</li>
+ *     <li>Fixed the test data setup logic, only setup test data when the tests begin,
+ *     and clear test data after all the tests finished running</li>
+ * </ul>
+ * </p>
+ *
+ * @author j3_guile, GreatKevin
+ * @version 1.2
  */
 public class MyChallengesTest extends BaseDirectAPITest {
 
@@ -39,16 +54,6 @@ public class MyChallengesTest extends BaseDirectAPITest {
      * The base url of this test.
      */
     private static final String BASE_URL = "/api/v2/challenges";
-
-    /**
-     * Flag for global initialization.
-     */
-    private static Boolean isInit = false;
-
-    /**
-     * Flag for global completion.
-     */
-    private static Boolean isDone = false;
 
     /**
      * The token is expired.
@@ -79,6 +84,41 @@ public class MyChallengesTest extends BaseDirectAPITest {
         + "AGDjrdckn8hlX4ucGCFO4wF3ClvlbKDqk";
 
     /**
+     * The number of tests have been run.
+     *
+     * @since 1.2
+     */
+    private static int currentRunningCount = 0;
+
+    /**
+     * The total tests count of MyChallengesTest
+     *
+     * @since 1.2
+     */
+    private static int testsCount = -1;
+
+    /**
+     * Counts the number of tests in this junit test class.
+     *
+     * @return the number of tests.
+     *
+     * @since 1.2
+     */
+    private int countTests() {
+        if (testsCount < 0) {
+            int count = 0;
+            for (Method m : this.getClass().getMethods()) {
+                if (m.isAnnotationPresent(Test.class)) {
+                    count++;
+                }
+            }
+            testsCount = count;
+        }
+
+        return testsCount;
+    }
+
+    /**
      * This method will insert test data into topcoder database.
      *
      * @throws IOException if any error occurred during reading file.
@@ -107,12 +147,13 @@ public class MyChallengesTest extends BaseDirectAPITest {
      */
     @Before
     public void setup() throws IOException {
-        if (!isInit) {
+        if(currentRunningCount == 0) {
+            // if no tests have been run yet, setup the test data
             clearMyChallengeGroupsData();
             cleanTestData();
             insertTestData();
-            isInit = true;
         }
+        currentRunningCount++;
     }
 
     /**
@@ -139,8 +180,9 @@ public class MyChallengesTest extends BaseDirectAPITest {
      */
     @After
     public void tearDown() throws IOException {
-        clearMyChallengeGroupsData();
-        if (isDone) {
+        if(currentRunningCount == countTests()) {
+            //clear test data after all the tests have been run
+            clearMyChallengeGroupsData();
             cleanTestData();
         }
     }
@@ -155,38 +197,6 @@ public class MyChallengesTest extends BaseDirectAPITest {
         tcsCatalogJdbcTemplate.update("DELETE FROM group_associated_billing_accounts WHERE group_id = 100000", map);
         tcsCatalogJdbcTemplate.update("DELETE FROM group_member WHERE group_id = 100000", map);
         tcsCatalogJdbcTemplate.update("DELETE FROM customer_group WHERE group_id = 100000", map);
-    }
-
-    /**
-     * Create http request.
-     *
-     * @param url The url
-     * @param token The jwt token passed to api.
-     * @return The http request.
-     * @throws Exception if any error occurred.
-     */
-    private ResultActions createRequest(String url, String token) throws Exception {
-        return this.createGETRequest(BASE_URL + url, token);
-    }
-
-    /**
-     * The helper method that used to perform failure test.
-     *
-     * @param url the url to call
-     * @param status the expected HTTP status.
-     * @param expectedStatus the content expected status.
-     * @param token The jwt token passed to api.
-     * @param expectedErrMsg The expected error message.
-     * @throws Exception if any error occurred.
-     */
-    private void assertBadResponse(String url, ResultMatcher status, Integer expectedStatus, String token,
-        String expectedErrMsg) throws Exception {
-        ResultActions req = createRequest(url, token);
-        req.andExpect(status);
-        req.andExpect(jsonPath("$.result.status", is(expectedStatus)));
-        if (isNotNullNorEmpty(expectedErrMsg)) {
-            req.andExpect(jsonPath("$.result.content.message").value(expectedErrMsg));
-        }
     }
 
     /**
@@ -422,7 +432,7 @@ public class MyChallengesTest extends BaseDirectAPITest {
     @Test
     public void callerNotSameAsCreator() throws Exception {
         assertBadResponse("?filter=" + encode("creator=super"), status().isBadRequest(), 400, MEMBER_HEFFAN_TOKEN,
-            "Invalid creator, only current user is supported.");
+                "Invalid creator, only current user is supported.");
     }
 
     /**
@@ -447,13 +457,13 @@ public class MyChallengesTest extends BaseDirectAPITest {
     // @Test
     public void supportedSortOrders() throws Exception {
         createRequest("?filter=" + encode("creator=heffan") + "&limit=1&orderBy=id asc nulls first",
-            MEMBER_HEFFAN_TOKEN).andExpect(status().isOk());
+                MEMBER_HEFFAN_TOKEN).andExpect(status().isOk());
         createRequest("?filter=" + encode("creator=heffan") + "&limit=1&orderBy=id desc nulls last",
-            MEMBER_HEFFAN_TOKEN).andExpect(status().isOk());
+                MEMBER_HEFFAN_TOKEN).andExpect(status().isOk());
 
         // should fail for other combinations
         createRequest("?filter=" + encode("creator=heffan") + "&limit=1&orderBy=id asc nulls last"
-            , MEMBER_HEFFAN_TOKEN).andExpect(status().isBadRequest());
+                , MEMBER_HEFFAN_TOKEN).andExpect(status().isBadRequest());
         createRequest("?filter=" + encode("creator=heffan") + "&limit=1&orderBy=id desc nulls first"
             , MEMBER_HEFFAN_TOKEN).andExpect(status().isBadRequest());
 
@@ -465,7 +475,7 @@ public class MyChallengesTest extends BaseDirectAPITest {
      * @throws Exception if any error occurred.
      */
     @Test
-    public void orderby_scenario_1() throws Exception {
+    public void orderby_scenario_d1() throws Exception {
         createRequest("?filter=" + encode("creator=heffan") + "&limit=1&orderBy=id"
             , MEMBER_HEFFAN_TOKEN)
             .andExpect(status().isOk())
@@ -474,12 +484,12 @@ public class MyChallengesTest extends BaseDirectAPITest {
         createRequest("?filter=" + encode("creator=heffan") + "&limit=1&orderBy=challengeName"
             , MEMBER_HEFFAN_TOKEN)
             .andExpect(status().isOk())
-            .andExpect(jsonPath("$.result.content[0].id", is("131")));
+            .andExpect(jsonPath("$.result.content[0].id", is("40005504")));
 
         createRequest("?filter=" + encode("creator=heffan") + "&limit=1&orderBy=challengeType"
             , MEMBER_HEFFAN_TOKEN)
             .andExpect(status().isOk())
-            .andExpect(jsonPath("$.result.content[0].id", is("961")));
+            .andExpect(jsonPath("$.result.content[0].id", is("40005728")));
 
         createRequest("?filter=" + encode("creator=heffan") + "&limit=1&orderBy=clientName"
             , MEMBER_HEFFAN_TOKEN)
@@ -514,12 +524,12 @@ public class MyChallengesTest extends BaseDirectAPITest {
         createRequest("?filter=" + encode("creator=heffan") + "&limit=1&orderBy=challengeStartDate"
             , MEMBER_HEFFAN_TOKEN)
             .andExpect(status().isOk())
-            .andExpect(jsonPath("$.result.content[0].id", is("981")));
+            .andExpect(jsonPath("$.result.content[0].id", is("40005740")));
 
         createRequest("?filter=" + encode("creator=heffan") + "&limit=1&orderBy=challengeEndDate"
             , MEMBER_HEFFAN_TOKEN)
             .andExpect(status().isOk())
-            .andExpect(jsonPath("$.result.content[0].id", is("981")));
+            .andExpect(jsonPath("$.result.content[0].id", is("40005740")));
 
         createRequest("?filter=" + encode("creator=heffan") + "&limit=1&orderBy=drPoints"
             , MEMBER_HEFFAN_TOKEN)
@@ -529,7 +539,7 @@ public class MyChallengesTest extends BaseDirectAPITest {
         createRequest("?filter=" + encode("creator=heffan") + "&limit=1&orderBy=challengeStatus"
             , MEMBER_HEFFAN_TOKEN)
             .andExpect(status().isOk())
-            .andExpect(jsonPath("$.result.content[0].id", is("761")));
+            .andExpect(jsonPath("$.result.content[0].id", is("40005736")));
 
         // try sorting by lists
         createRequest("?filter=" + encode("creator=heffan") + "&limit=1&orderBy=challengeTechnologies"
@@ -581,12 +591,38 @@ public class MyChallengesTest extends BaseDirectAPITest {
      *
      * @throws Exception if any error occurred.
      */
-    //@Test
+    @Test
     public void orderby_scenario_2() throws Exception {
-        createRequest("?filter=" + encode("creator=heffan") + "&limit=1&orderBy=id desc nulls first"
+        createRequest("?filter=" + encode("creator=heffan") + "&limit=1&orderBy=id desc nulls last"
             , MEMBER_HEFFAN_TOKEN)
             .andExpect(status().isOk())
             .andExpect(jsonPath("$.result.content[0].id", is("40005740")));
+    }
+
+    /**
+     * Test order by desc null first, which is not supported.
+     *
+     * @throws Exception if any error occurred.
+     */
+    @Test
+    public void orderby_scenario_3() throws Exception {
+        createRequest("?filter=" + encode("creator=heffan") + "&limit=1&orderBy=id desc nulls first"
+                , MEMBER_HEFFAN_TOKEN)
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.result.content.message", Matchers.containsString("Specified sort order is not supported")));
+    }
+
+    /**
+     * Test order by  asc nulls last, which is not supported.
+     *
+     * @throws Exception if any error occurred.
+     */
+    @Test
+    public void orderby_scenario_4() throws Exception {
+        createRequest("?filter=" + encode("creator=heffan") + "&limit=1&orderBy=id asc nulls last"
+                , MEMBER_HEFFAN_TOKEN)
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.result.content.message", Matchers.containsString("Specified sort order is not supported")));
     }
 
     /**
@@ -601,6 +637,17 @@ public class MyChallengesTest extends BaseDirectAPITest {
     }
 
     /**
+     * The default scenario with metadata.
+     *
+     * @throws Exception if any error occurred.
+     */
+    @Test
+    public void success_scenario_1_metadata() throws Exception {
+        assertResponse("test/expected/my_challenges/expected_get_my_challenges_1_metadata.json",
+                createRequest("?metadata=true&filter=" + encode("creator=heffan"), MEMBER_HEFFAN_TOKEN));
+    }
+
+    /**
      * Test challengeType filter.
      *
      * @throws Exception if any error occurred.
@@ -609,6 +656,18 @@ public class MyChallengesTest extends BaseDirectAPITest {
     public void success_scenario_2() throws Exception {
         assertResponse("test/expected/my_challenges/expected_get_my_challenges_2.json",
             createRequest("?filter=" + encode("creator=heffan&challengeType=development"), MEMBER_HEFFAN_TOKEN));
+    }
+
+
+    /**
+     * Test challengeType filter with metadata
+     *
+     * @throws Exception if any error occurred.
+     */
+    @Test
+    public void success_scenario_2_metadata() throws Exception {
+        assertResponse("test/expected/my_challenges/expected_get_my_challenges_2_metadata.json",
+                createRequest("?metadata=true&filter=" + encode("creator=heffan&challengeType=development"), MEMBER_HEFFAN_TOKEN));
     }
 
     /**
@@ -624,6 +683,18 @@ public class MyChallengesTest extends BaseDirectAPITest {
     }
 
     /**
+     * Test challengeType filter. Add multiple challenge type in it with metadata set to true
+     *
+     * @throws Exception if any error occurred.
+     */
+    @Test
+    public void success_scenario_3_metadata() throws Exception {
+        assertResponse("test/expected/my_challenges/expected_get_my_challenges_3_metadata.json",
+                createRequest("?metadata=true&filter=" + encode("creator=heffan&challengeType=in(development, design)"),
+                        MEMBER_HEFFAN_TOKEN));
+    }
+
+    /**
      * Test type filter. The type is active
      *
      * @throws Exception if any error occurred.
@@ -635,6 +706,18 @@ public class MyChallengesTest extends BaseDirectAPITest {
     }
 
     /**
+     * Test type filter. The type is active with metadata support.
+     *
+     * @throws Exception if any error occurred.
+     */
+    @Test
+    public void success_scenario_4_metadata() throws Exception {
+        assertResponse("test/expected/my_challenges/expected_get_my_challenges_4_metadata.json",
+                createRequest("?metadata=true&filter=" + encode("creator=heffan&type=active"), MEMBER_HEFFAN_TOKEN));
+    }
+
+
+    /**
      * Test type filter. The type is past
      *
      * @throws Exception if any error occurred.
@@ -643,6 +726,17 @@ public class MyChallengesTest extends BaseDirectAPITest {
     public void success_scenario_5() throws Exception {
         assertResponse("test/expected/my_challenges/expected_get_my_challenges_5.json",
             createRequest("?filter=" + encode("creator=heffan&type=past"), MEMBER_HEFFAN_TOKEN));
+    }
+
+    /**
+     * Test type filter. The type is past with metadata support
+     *
+     * @throws Exception if any error occurred.
+     */
+    @Test
+    public void success_scenario_5_metadata() throws Exception {
+        assertResponse("test/expected/my_challenges/expected_get_my_challenges_5_metadata.json",
+                createRequest("?metadata=true&filter=" + encode("creator=heffan&type=past"), MEMBER_HEFFAN_TOKEN));
     }
 
     /**
@@ -657,6 +751,17 @@ public class MyChallengesTest extends BaseDirectAPITest {
     }
 
     /**
+     * Test type filter. The type is draft with metadata support
+     *
+     * @throws Exception if any error occurred.
+     */
+    @Test
+    public void success_scenario_6_metadata() throws Exception {
+        assertResponse("test/expected/my_challenges/expected_get_my_challenges_6_metadata.json",
+                createRequest("?metadata=true&filter=" + encode("creator=heffan&type=draft"), MEMBER_HEFFAN_TOKEN));
+    }
+
+    /**
      * Test directProjectId filter.
      *
      * @throws Exception if any error occurred.
@@ -665,6 +770,17 @@ public class MyChallengesTest extends BaseDirectAPITest {
     public void success_scenario_7() throws Exception {
         assertResponse("test/expected/my_challenges/expected_get_my_challenges_7.json",
             createRequest("?filter=" + encode("creator=heffan&directProjectId=40005515"), MEMBER_HEFFAN_TOKEN));
+    }
+
+    /**
+     * Test directProjectId filter with metadata support
+     *
+     * @throws Exception if any error occurred.
+     */
+    @Test
+    public void success_scenario_7_metadata() throws Exception {
+        assertResponse("test/expected/my_challenges/expected_get_my_challenges_7_metadata.json",
+                createRequest("?metadata=true&filter=" + encode("creator=heffan&directProjectId=40005515"), MEMBER_HEFFAN_TOKEN));
     }
 
     /**
@@ -693,6 +809,18 @@ public class MyChallengesTest extends BaseDirectAPITest {
     }
 
     /**
+     * Test challengeTechnologies filter with metadata support.
+     *
+     * @throws Exception if any error occurred.
+     */
+    @Test
+    public void success_scenario_9_metadata() throws Exception {
+        assertResponse("test/expected/my_challenges/expected_get_my_challenges_9_metadata.json",
+                createRequest("?metadata=true&filter=" + encode("creator=heffan&challengeTechnologies=j2ee"), MEMBER_HEFFAN_TOKEN));
+    }
+
+
+    /**
      * Test challengePlatforms filter.
      *
      * @throws Exception if any error occurred.
@@ -701,6 +829,17 @@ public class MyChallengesTest extends BaseDirectAPITest {
     public void success_scenario_10() throws Exception {
         assertResponse("test/expected/my_challenges/expected_get_my_challenges_10.json",
             createRequest("?filter=" + encode("creator=heffan&challengePlatforms=nodejs"), MEMBER_HEFFAN_TOKEN));
+    }
+
+    /**
+     * Test challengePlatforms filter with metadata support
+     *
+     * @throws Exception if any error occurred.
+     */
+    @Test
+    public void success_scenario_10_metadata() throws Exception {
+        assertResponse("test/expected/my_challenges/expected_get_my_challenges_10_metadata.json",
+                createRequest("?metadata=true&filter=" + encode("creator=heffan&challengePlatforms=nodejs"), MEMBER_HEFFAN_TOKEN));
     }
 
     /**
@@ -715,6 +854,17 @@ public class MyChallengesTest extends BaseDirectAPITest {
     }
 
     /**
+     * Test offset filter. The offset is 10 with metadata support.
+     *
+     * @throws Exception if any error occurred.
+     */
+    @Test
+    public void success_scenario_11_metadata() throws Exception {
+        assertResponse("test/expected/my_challenges/expected_get_my_challenges_11_metadata.json",
+                createRequest("?metadata=true&filter=" + encode("creator=heffan") + "&limit=10&offset=10", MEMBER_HEFFAN_TOKEN));
+    }
+
+    /**
      * Test limit filter. The limit is -1 so the pageSize should be max value of integer.
      *
      * @throws Exception if any error occurred.
@@ -726,6 +876,20 @@ public class MyChallengesTest extends BaseDirectAPITest {
     }
 
     /**
+     * Test limit filter. The limit is -1 so the pageSize should be max value of integer with metadata support
+     *
+     * @throws Exception if any error occurred.
+     */
+    @Test
+    public void success_scenario_12_metadata() throws Exception {
+        assertResponse("test/expected/my_challenges/expected_get_my_challenges_12_metadata.json",
+                createRequest("?metadata=true&filter=" + encode("creator=heffan") + "&limit=-1", MEMBER_HEFFAN_TOKEN));
+
+        createRequest("?metadata=true&filter=" + encode("creator=heffan") + "&limit=-1", MEMBER_HEFFAN_TOKEN).andExpect(status().isOk()).andExpect(
+                jsonPath("$.result.content", Matchers.hasSize(268))).andExpect(jsonPath("$.result.metadata.totalCount", is(268)));
+    }
+
+    /**
      * Test limit filter. The limit is 2.
      *
      * @throws Exception if any error occurred.
@@ -733,7 +897,18 @@ public class MyChallengesTest extends BaseDirectAPITest {
     @Test
     public void success_scenario_13() throws Exception {
         assertResponse("test/expected/my_challenges/expected_get_my_challenges_13.json",
-            createRequest("?filter=" + encode("creator=heffan") + "&limit=2", MEMBER_HEFFAN_TOKEN));
+                createRequest("?filter=" + encode("creator=heffan") + "&limit=2", MEMBER_HEFFAN_TOKEN));
+    }
+
+    /**
+     * Test limit filter. The limit is 2 with metadata support
+     *
+     * @throws Exception if any error occurred.
+     */
+    @Test
+    public void success_scenario_13_metadata() throws Exception {
+        assertResponse("test/expected/my_challenges/expected_get_my_challenges_13_metadata.json",
+                createRequest("?metadata=true&filter=" + encode("creator=heffan") + "&limit=2", MEMBER_HEFFAN_TOKEN));
     }
 
     /**
@@ -748,6 +923,17 @@ public class MyChallengesTest extends BaseDirectAPITest {
     }
 
     /**
+     * Test limit and offset filter with metadata support
+     *
+     * @throws Exception if any error occurred.
+     */
+    @Test
+    public void success_scenario_14_metadata() throws Exception {
+        assertResponse("test/expected/my_challenges/expected_get_my_challenges_14_metadata.json",
+                createRequest("?metadata=true&filter=" + encode("creator=heffan") + "&limit=2&offset=0", MEMBER_HEFFAN_TOKEN));
+    }
+
+    /**
      * Test limit and offset filter.
      *
      * @throws Exception if any error occurred.
@@ -756,6 +942,17 @@ public class MyChallengesTest extends BaseDirectAPITest {
     public void success_scenario_15() throws Exception {
         assertResponse("test/expected/my_challenges/expected_get_my_challenges_15.json",
             createRequest("?filter=" + encode("creator=heffan") + "&limit=2&offset=2", MEMBER_HEFFAN_TOKEN));
+    }
+
+    /**
+     * Test limit and offset filter with metadata support.
+     *
+     * @throws Exception if any error occurred.
+     */
+    @Test
+    public void success_scenario_15_metadata() throws Exception {
+        assertResponse("test/expected/my_challenges/expected_get_my_challenges_15_metadata.json",
+                createRequest("?metadata=true&filter=" + encode("creator=heffan") + "&limit=2&offset=2", MEMBER_HEFFAN_TOKEN));
     }
 
     /**
@@ -810,7 +1007,7 @@ public class MyChallengesTest extends BaseDirectAPITest {
     @Test
     public void success_scenario_20() throws Exception {
         assertResponse("test/expected/my_challenges/expected_get_my_challenges_17.json",
-            createRequest("?filter=" + encode("creator=heffan&challengeStatus=1&type=past"), MEMBER_HEFFAN_TOKEN));
+                createRequest("?filter=" + encode("creator=heffan&challengeStatus=1&type=past"), MEMBER_HEFFAN_TOKEN));
     }
 
     /**
@@ -821,7 +1018,7 @@ public class MyChallengesTest extends BaseDirectAPITest {
     @Test
     public void success_scenario_21() throws Exception {
         assertResponse("test/expected/my_challenges/expected_get_my_challenges_17.json",
-            createRequest("?filter=" + encode("creator=heffan&challengeStatus=active&type=past"), MEMBER_HEFFAN_TOKEN));
+                createRequest("?filter=" + encode("creator=heffan&challengeStatus=active&type=past"), MEMBER_HEFFAN_TOKEN));
     }
 
     /**
@@ -834,7 +1031,7 @@ public class MyChallengesTest extends BaseDirectAPITest {
     @Test
     public void success_scenario_22() throws Exception {
         createRequest("?limit=1000", getNoProjectMember()).andExpect(status().isOk()).andExpect(
-            jsonPath("$.result.content", Matchers.hasSize(0)));
+                jsonPath("$.result.content", Matchers.hasSize(0)));
     }
 
     /**
@@ -849,6 +1046,7 @@ public class MyChallengesTest extends BaseDirectAPITest {
             .andExpect(jsonPath("$.result.content", Matchers.hasSize(10))).andReturn().getResponse()
             .getContentAsString();
         verifyDirectId(content, 40005501);
+        deleteUserGrant_1();
     }
 
     /**
@@ -876,8 +1074,8 @@ public class MyChallengesTest extends BaseDirectAPITest {
         HashMap<String, Object> map = new HashMap<String, Object>();
         setupGroupMembership();
         tcsCatalogJdbcTemplate.update(
-            "INSERT INTO group_associated_direct_projects(group_direct_project_id, group_id, "
-                + "tc_direct_project_id) VALUES (100000, 100000, 40005501)", map);
+                "INSERT INTO group_associated_direct_projects(group_direct_project_id, group_id, "
+                        + "tc_direct_project_id) VALUES (100000, 100000, 40005501)", map);
         String content = createRequest("?limit=1000", getNoProjectMember()).andExpect(status().isOk())
             .andExpect(jsonPath("$.result.content", Matchers.hasSize(10))).andReturn().getResponse()
             .getContentAsString();
@@ -891,6 +1089,7 @@ public class MyChallengesTest extends BaseDirectAPITest {
         archiveTestGroup();
         createRequest("?limit=1000", getNoProjectMember()).andExpect(status().isOk()).andExpect(
             jsonPath("$.result.content", Matchers.hasSize(0)));
+        deleteGroupMembership();
     }
 
     /**
@@ -903,7 +1102,7 @@ public class MyChallengesTest extends BaseDirectAPITest {
         HashMap<String, Object> map = new HashMap<String, Object>();
         setupGroupMembership();
         tcsCatalogJdbcTemplate.update(
-            "INSERT INTO group_associated_billing_accounts(group_id, billing_account_id) VALUES (100000, 100000)", map);
+                "INSERT INTO group_associated_billing_accounts(group_id, billing_account_id) VALUES (100000, 100000)", map);
         String content = createRequest("?limit=1000", getNoProjectMember()).andExpect(status().isOk())
             .andExpect(jsonPath("$.result.content", Matchers.hasSize(10))).andReturn().getResponse()
             .getContentAsString();
@@ -911,12 +1110,13 @@ public class MyChallengesTest extends BaseDirectAPITest {
 
         deactivateMember();
         createRequest("?limit=1000", getNoProjectMember()).andExpect(status().isOk()).andExpect(
-            jsonPath("$.result.content", Matchers.hasSize(0)));
+                jsonPath("$.result.content", Matchers.hasSize(0)));
 
         activateMember();
         archiveTestGroup();
         createRequest("?limit=1000", getNoProjectMember()).andExpect(status().isOk()).andExpect(
             jsonPath("$.result.content", Matchers.hasSize(0)));
+        deleteGroupMembership();
     }
 
     /**
@@ -934,12 +1134,13 @@ public class MyChallengesTest extends BaseDirectAPITest {
 
         deactivateMember();
         createRequest("?limit=1000", getNoProjectMember()).andExpect(status().isOk()).andExpect(
-            jsonPath("$.result.content", Matchers.hasSize(0)));
+                jsonPath("$.result.content", Matchers.hasSize(0)));
 
         activateMember();
         archiveTestGroup();
         createRequest("?limit=1000", getNoProjectMember()).andExpect(status().isOk()).andExpect(
-            jsonPath("$.result.content", Matchers.hasSize(0)));
+                jsonPath("$.result.content", Matchers.hasSize(0)));
+        deleteGroupMembership();
     }
 
     /**
@@ -953,23 +1154,23 @@ public class MyChallengesTest extends BaseDirectAPITest {
         setupUserGrant_1();
 
         tcsCatalogJdbcTemplate.update(
-            "UPDATE user_permission_grant set permission_type_id = 2 WHERE user_permission_grant_id = 40005573",
-            new HashMap<String, Object>());
+                "UPDATE user_permission_grant set permission_type_id = 2 WHERE user_permission_grant_id = 40005573",
+                new HashMap<String, Object>());
         createRequest("?limit=1000", getNoProjectMember()).andExpect(status().isOk())
             .andExpect(jsonPath("$.result.content", Matchers.hasSize(10)));
 
         tcsCatalogJdbcTemplate.update(
-            "UPDATE user_permission_grant set permission_type_id = 3 WHERE user_permission_grant_id = 40005573",
-            new HashMap<String, Object>());
+                "UPDATE user_permission_grant set permission_type_id = 3 WHERE user_permission_grant_id = 40005573",
+                new HashMap<String, Object>());
         createRequest("?limit=1000", getNoProjectMember()).andExpect(status().isOk())
             .andExpect(jsonPath("$.result.content", Matchers.hasSize(10)));
 
         tcsCatalogJdbcTemplate.update(
-            "UPDATE user_permission_grant set permission_type_id = 4 WHERE user_permission_grant_id = 40005573",
-            new HashMap<String, Object>());
+                "UPDATE user_permission_grant set permission_type_id = 4 WHERE user_permission_grant_id = 40005573",
+                new HashMap<String, Object>());
         createRequest("?limit=1000", getNoProjectMember()).andExpect(status().isOk())
         .andExpect(jsonPath("$.result.content", Matchers.hasSize(0)));
-
+        deleteUserGrant_1();
     }
 
     /**
@@ -1010,14 +1211,14 @@ public class MyChallengesTest extends BaseDirectAPITest {
      */
     @Test
     public void success_scenario_29() throws Exception {
-        createRequest("?limit=1000&filter=" + encode("creator=heffan&directProjectId=in(40005515)")
+        createRequest("?metadata=true&limit=1000&filter=" + encode("creator=heffan&directProjectId=in(40005515)")
             , MEMBER_HEFFAN_TOKEN)
             .andExpect(status().isOk())
-            .andExpect(jsonPath("$.result.content", Matchers.hasSize(10)));
-        createRequest("?limit=1000&filter=" + encode("creator=heffan&directProjectId= IN ( 40005515, 40005524)")
+            .andExpect(jsonPath("$.result.content", Matchers.hasSize(9))).andExpect(jsonPath("$.result.metadata.totalCount", is(9)));
+        createRequest("?metadata=true&limit=1000&filter=" + encode("creator=heffan&directProjectId= IN ( 40005515, 40005524)")
             , MEMBER_HEFFAN_TOKEN)
             .andExpect(status().isOk())
-            .andExpect(jsonPath("$.result.content", Matchers.hasSize(20)));
+            .andExpect(jsonPath("$.result.content", Matchers.hasSize(19))).andExpect(jsonPath("$.result.metadata.totalCount", is(19)));
     }
 
     /**
@@ -1030,15 +1231,15 @@ public class MyChallengesTest extends BaseDirectAPITest {
         createRequest("?limit=1000&filter=" + encode("creator=heffan&type=in(past)")
             , MEMBER_HEFFAN_TOKEN)
             .andExpect(status().isOk())
-            .andExpect(jsonPath("$.result.content", Matchers.hasSize(192)));
-        createRequest("?limit=1000&filter=" + encode("creator=heffan&type= IN ( active, draft)")
+            .andExpect(jsonPath("$.result.content", Matchers.hasSize(183)));
+        createRequest("?metadata=true&limit=1000&filter=" + encode("creator=heffan&type= IN ( active, draft)")
             , MEMBER_HEFFAN_TOKEN)
             .andExpect(status().isOk())
-            .andExpect(jsonPath("$.result.content", Matchers.hasSize(85)));
+            .andExpect(jsonPath("$.result.content", Matchers.hasSize(85))).andExpect(jsonPath("$.result.metadata.totalCount", is(85)));
         createRequest("?limit=1000&filter=" + encode("creator=heffan&type=in(past, active, draft)")
-            , MEMBER_HEFFAN_TOKEN)
+                , MEMBER_HEFFAN_TOKEN)
             .andExpect(status().isOk())
-            .andExpect(jsonPath("$.result.content", Matchers.hasSize(277)));
+            .andExpect(jsonPath("$.result.content", Matchers.hasSize(268)));
     }
 
     /**
@@ -1048,19 +1249,20 @@ public class MyChallengesTest extends BaseDirectAPITest {
      */
     @Test
     public void success_scenario_31() throws Exception {
-        createRequest("?limit=1000&filter=" + encode("creator=heffan&directProjectName=in(Client 40005501)")
+        createRequest("?metadata=true&limit=1000&filter=" + encode("creator=heffan&directProjectName=in(Client 40005501)")
             , MEMBER_HEFFAN_TOKEN)
             .andExpect(status().isOk())
-            .andExpect(jsonPath("$.result.content", Matchers.hasSize(120)));
+            .andExpect(jsonPath("$.result.content", Matchers.hasSize(115)))
+            .andExpect(jsonPath("$.result.metadata.totalCount", is(115)));
         createRequest("?limit=1000&filter=" + encode("creator=heffan&directProjectName=in(Client 40005502)")
-            , MEMBER_HEFFAN_TOKEN)
+                , MEMBER_HEFFAN_TOKEN)
             .andExpect(status().isOk())
-            .andExpect(jsonPath("$.result.content", Matchers.hasSize(120)));
+            .andExpect(jsonPath("$.result.content", Matchers.hasSize(116)));
         createRequest("?limit=1000&filter="
             + encode("creator=heffan&directProjectName=in(Client 40005502,Client 40005501)")
             , MEMBER_HEFFAN_TOKEN)
             .andExpect(status().isOk())
-            .andExpect(jsonPath("$.result.content", Matchers.hasSize(240)));
+            .andExpect(jsonPath("$.result.content", Matchers.hasSize(231)));
     }
 
     /**
@@ -1075,17 +1277,18 @@ public class MyChallengesTest extends BaseDirectAPITest {
             .andExpect(status().isOk())
             .andExpect(jsonPath("$.result.content", Matchers.hasSize(1)));
         createRequest("?limit=1000&filter=" + encode("creator=heffan&challengePlatforms=in(google)")
+                , MEMBER_HEFFAN_TOKEN)
+            .andExpect(status().isOk())
+            .andExpect(jsonPath("$.result.content", Matchers.hasSize(1)));
+        createRequest("?metadata=true&limit=1000&filter=" + encode("creator=heffan&challengePlatforms=in(google, nodejs)")
             , MEMBER_HEFFAN_TOKEN)
             .andExpect(status().isOk())
-            .andExpect(jsonPath("$.result.content", Matchers.hasSize(2)));
-        createRequest("?limit=1000&filter=" + encode("creator=heffan&challengePlatforms=in(google, nodejs)")
-            , MEMBER_HEFFAN_TOKEN)
-            .andExpect(status().isOk())
-            .andExpect(jsonPath("$.result.content", Matchers.hasSize(3)));
+            .andExpect(jsonPath("$.result.content", Matchers.hasSize(2)))
+            .andExpect(jsonPath("$.result.metadata.totalCount", is(2)));
         createRequest("?limit=1000&filter=" + encode("creator=heffan&challengePlatforms=in(google, nodejs, heroku)")
             , MEMBER_HEFFAN_TOKEN)
             .andExpect(status().isOk())
-            .andExpect(jsonPath("$.result.content", Matchers.hasSize(3)));
+            .andExpect(jsonPath("$.result.content", Matchers.hasSize(2)));
     }
 
     /**
@@ -1098,15 +1301,16 @@ public class MyChallengesTest extends BaseDirectAPITest {
         createRequest("?limit=1000&filter=" + encode("creator=heffan&challengeTechnologies=in(j2ee)")
             , MEMBER_HEFFAN_TOKEN)
             .andExpect(status().isOk())
-            .andExpect(jsonPath("$.result.content", Matchers.hasSize(42)));
-        createRequest("?limit=1000&filter=" + encode("creator=heffan&challengeTechnologies=in(jsf)")
+            .andExpect(jsonPath("$.result.content", Matchers.hasSize(41)));
+        createRequest("?metadata=true&limit=1000&filter=" + encode("creator=heffan&challengeTechnologies=in(jsf)")
             , MEMBER_HEFFAN_TOKEN)
             .andExpect(status().isOk())
-            .andExpect(jsonPath("$.result.content", Matchers.hasSize(3)));
+            .andExpect(jsonPath("$.result.content", Matchers.hasSize(3)))
+            .andExpect(jsonPath("$.result.metadata.totalCount", is(3)));
         createRequest("?limit=1000&filter=" + encode("creator=heffan&challengeTechnologies=in(j2ee, jsf)")
             , MEMBER_HEFFAN_TOKEN)
             .andExpect(status().isOk())
-            .andExpect(jsonPath("$.result.content", Matchers.hasSize(45)));
+            .andExpect(jsonPath("$.result.content", Matchers.hasSize(44)));
     }
 
     /**
@@ -1129,10 +1333,11 @@ public class MyChallengesTest extends BaseDirectAPITest {
      */
     @Test
     public void success_scenario_35() throws Exception {
-        createRequest("?limit=1000&filter=" + encode("creator=heffan&challengeTechnologies=in(awesometech)")
+        createRequest("?metadata=true&limit=1000&filter=" + encode("creator=heffan&challengeTechnologies=in(awesometech)")
             , MEMBER_HEFFAN_TOKEN)
             .andExpect(status().isOk())
-            .andExpect(jsonPath("$.result.content", Matchers.hasSize(0)));
+            .andExpect(jsonPath("$.result.content", Matchers.hasSize(0)))
+            .andExpect(jsonPath("$.result.metadata.totalCount", is(0)));
     }
 
     /**
@@ -1146,16 +1351,17 @@ public class MyChallengesTest extends BaseDirectAPITest {
             , MEMBER_HEFFAN_TOKEN)
             .andExpect(status().isOk())
             .andExpect(jsonPath("$.result.content[0].clientId", is(40005501)))
-            .andExpect(jsonPath("$.result.content", Matchers.hasSize(120)));
-        createRequest("?limit=1000&filter=" + encode("creator=heffan&clientId=40005502")
+            .andExpect(jsonPath("$.result.content", Matchers.hasSize(115)));
+        createRequest("?metadata=true&limit=1000&filter=" + encode("creator=heffan&clientId=40005502")
             , MEMBER_HEFFAN_TOKEN)
             .andExpect(status().isOk())
             .andExpect(jsonPath("$.result.content[0].clientId", is(40005502)))
-            .andExpect(jsonPath("$.result.content", Matchers.hasSize(120)));
+            .andExpect(jsonPath("$.result.content", Matchers.hasSize(116)))
+            .andExpect(jsonPath("$.result.metadata.totalCount", is(116)));
         createRequest("?limit=1000&filter=" + encode("creator=heffan&clientId=in(40005501,40005502)")
-            , MEMBER_HEFFAN_TOKEN)
+                , MEMBER_HEFFAN_TOKEN)
             .andExpect(status().isOk())
-            .andExpect(jsonPath("$.result.content", Matchers.hasSize(240)));
+            .andExpect(jsonPath("$.result.content", Matchers.hasSize(231)));
     }
 
     /**
@@ -1169,19 +1375,407 @@ public class MyChallengesTest extends BaseDirectAPITest {
             , MEMBER_HEFFAN_TOKEN)
             .andExpect(status().isOk())
             .andExpect(jsonPath("$.result.content[0].billingId", is(40005502)))
-            .andExpect(jsonPath("$.result.content", Matchers.hasSize(60)));
-        createRequest("?limit=1000&filter=" + encode("creator=heffan&billingId=40005504")
+            .andExpect(jsonPath("$.result.content", Matchers.hasSize(57)));
+        createRequest("?metadata=true&limit=1000&filter=" + encode("creator=heffan&billingId=40005504")
             , MEMBER_HEFFAN_TOKEN)
             .andExpect(status().isOk())
             .andExpect(jsonPath("$.result.content[0].billingId", is(40005504)))
-            .andExpect(jsonPath("$.result.content", Matchers.hasSize(60)));
+            .andExpect(jsonPath("$.result.content", Matchers.hasSize(58)))
+            .andExpect(jsonPath("$.result.metadata.totalCount", is(58)));
         createRequest("?limit=1000&filter=" + encode("creator=heffan&clientId=in(40005502,40005504)")
             , MEMBER_HEFFAN_TOKEN)
             .andExpect(status().isOk())
-            .andExpect(jsonPath("$.result.content", Matchers.hasSize(120)));
-        isDone = true;
-        isInit = false;
+            .andExpect(jsonPath("$.result.content", Matchers.hasSize(116)));
     }
+
+    /**
+     * Test the API with metadata set to false.
+     *
+     * @throws Exception if any error occurred.
+     */
+    @Test
+    public void testMetadataFalse() throws Exception {
+        assertResponse("test/expected/my_challenges/expected_get_my_challenges_1.json",
+                createRequest("?metadata=false&filter=" + encode("creator=heffan"), MEMBER_HEFFAN_TOKEN));
+    }
+
+    /**
+     * Test the API with metadata set to arbitrary value except true.
+     *
+     * @throws Exception if any error occurred.
+     */
+    @Test
+    public void testMetadataArbitraryValues() throws Exception {
+        // should treat these values as false
+        assertResponse("test/expected/my_challenges/expected_get_my_challenges_1.json",
+                createRequest("?metadata=xxx&filter=" + encode("creator=heffan"), MEMBER_HEFFAN_TOKEN));
+        assertResponse("test/expected/my_challenges/expected_get_my_challenges_1.json",
+                createRequest("?metadata=&filter=" + encode("creator=heffan"), MEMBER_HEFFAN_TOKEN));
+        assertResponse("test/expected/my_challenges/expected_get_my_challenges_1.json",
+                createRequest("?metadata=[]&filter=" + encode("creator=heffan"), MEMBER_HEFFAN_TOKEN));
+    }
+
+    /**
+     * Test the startDateFrom filter with invalid values.
+     *
+     * @throws Exception if any error occurred.
+     */
+    @Test
+    public void testInvalidStartDateFrom() throws Exception {
+        createRequest("?filter=" + encode("creator=heffan&startDateFrom=xx/11/2014") + "&limit=1"
+                , MEMBER_HEFFAN_TOKEN)
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.result.content.message", Matchers.containsString("Invalid challenge start date filter")));
+        createRequest("?filter=" + encode("creator=heffan&startDateFrom=null") + "&limit=1"
+                , MEMBER_HEFFAN_TOKEN)
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.result.content.message", Matchers.containsString("Invalid challenge start date filter")));
+        createRequest("?filter=" + encode("creator=heffan&startDateFrom=abcdef") + "&limit=1"
+                , MEMBER_HEFFAN_TOKEN)
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.result.content.message", Matchers.containsString("Invalid challenge start date filter")));
+    }
+
+    /**
+     * Tests the startDateTo filter with invalid values.
+     *
+     * @throws Exception if any error occurred.
+     */
+    @Test
+    public void testInvalidStartDateTo() throws Exception {
+        createRequest("?filter=" + encode("creator=heffan&startDateTo=xx/11/2014") + "&limit=1"
+                , MEMBER_HEFFAN_TOKEN)
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.result.content.message", Matchers.containsString("Invalid challenge start date filter")));
+        createRequest("?filter=" + encode("creator=heffan&startDateTo=null") + "&limit=1"
+                , MEMBER_HEFFAN_TOKEN)
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.result.content.message", Matchers.containsString("Invalid challenge start date filter")));
+        createRequest("?filter=" + encode("creator=heffan&startDateTo=abcdef") + "&limit=1"
+                , MEMBER_HEFFAN_TOKEN)
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.result.content.message", Matchers.containsString("Invalid challenge start date filter")));
+    }
+
+    /**
+     * Tests the endDateFrom with invalid values.
+     *
+     * @throws Exception if any error occurred.
+     */
+    @Test
+    public void testInvalidEndDateFrom() throws Exception {
+        createRequest("?filter=" + encode("creator=heffan&endDateFrom=xx/11/2014") + "&limit=1"
+                , MEMBER_HEFFAN_TOKEN)
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.result.content.message", Matchers.containsString("Invalid challenge end date filter")));
+        createRequest("?filter=" + encode("creator=heffan&endDateFrom=null") + "&limit=1"
+                , MEMBER_HEFFAN_TOKEN)
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.result.content.message", Matchers.containsString("Invalid challenge end date filter")));
+        createRequest("?filter=" + encode("creator=heffan&endDateFrom=abcdef") + "&limit=1"
+                , MEMBER_HEFFAN_TOKEN)
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.result.content.message", Matchers.containsString("Invalid challenge end date filter")));
+    }
+
+    /**
+     * Tests the endDateTo with invalid values.
+     *
+     * @throws Exception if any error occurred.
+     */
+    @Test
+    public void testInvalidEndDateTo() throws Exception {
+        createRequest("?filter=" + encode("creator=heffan&endDateTo=xx/11/2014") + "&limit=1"
+                , MEMBER_HEFFAN_TOKEN)
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.result.content.message", Matchers.containsString("Invalid challenge end date filter")));
+        createRequest("?filter=" + encode("creator=heffan&endDateTo=null") + "&limit=1"
+                , MEMBER_HEFFAN_TOKEN)
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.result.content.message", Matchers.containsString("Invalid challenge end date filter")));
+        createRequest("?filter=" + encode("creator=heffan&endDateTo=abcdef") + "&limit=1"
+                , MEMBER_HEFFAN_TOKEN)
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.result.content.message", Matchers.containsString("Invalid challenge end date filter")));
+    }
+
+
+    /**
+     * Tests the startDateFrom filter only accuracy.
+     *
+     * @throws Exception if any error occurred.
+     */
+    @Test
+    public void testStartDateFrom() throws Exception {
+        createRequest("?filter=" + encode("creator=heffan&startDateFrom=08/01/2014") + "&limit=1000"
+                , MEMBER_HEFFAN_TOKEN)
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.result.content", Matchers.hasSize(268)));
+
+        createRequest("?filter=" + encode("creator=heffan&startDateFrom=08/02/2014") + "&limit=1000"
+                , MEMBER_HEFFAN_TOKEN)
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.result.content", Matchers.hasSize(0)));
+
+        advanceProjectPhases(40005617, 200);
+
+        createRequest("?filter=" + encode("creator=heffan&startDateFrom=01/01/2015") + "&limit=1000"
+                , MEMBER_HEFFAN_TOKEN)
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.result.content", Matchers.hasSize(1)))
+                .andExpect(jsonPath("$.result.content[0].id", is("40005617")));
+
+        pushBackProjectPhases(40005617, 200);
+    }
+
+    /**
+     * Tests the endDateFrom filter only accuracy.
+     *
+     * @throws Exception if any error occurred.
+     */
+    @Test
+    public void testEndDateFrom() throws Exception {
+        createRequest("?filter=" + encode("creator=heffan&endDateFrom=08/20/2014") + "&limit=1000"
+                , MEMBER_HEFFAN_TOKEN)
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.result.content", Matchers.hasSize(268)));
+
+        createRequest("?filter=" + encode("creator=heffan&endDateFrom=08/21/2014") + "&limit=1000"
+                , MEMBER_HEFFAN_TOKEN)
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.result.content", Matchers.hasSize(0)));
+
+        advanceProjectPhases(40005617, 1);
+
+        createRequest("?filter=" + encode("creator=heffan&endDateFrom=08/21/2014") + "&limit=1000"
+                , MEMBER_HEFFAN_TOKEN)
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.result.content", Matchers.hasSize(1)))
+                .andExpect(jsonPath("$.result.content[0].id", is("40005617")));
+
+        pushBackProjectPhases(40005617, 1);
+    }
+
+    /**
+     * Tests the startDateTo filter only accuracy.
+     *
+     * @throws Exception if any error occurred.
+     */
+    @Test
+    public void testStartDateTo() throws Exception {
+        createRequest("?filter=" + encode("creator=heffan&startDateTo=08/01/2014") + "&limit=1000"
+                , MEMBER_HEFFAN_TOKEN)
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.result.content", Matchers.hasSize(268)));
+
+        createRequest("?filter=" + encode("creator=heffan&startDateTo=07/31/2014") + "&limit=1000"
+                , MEMBER_HEFFAN_TOKEN)
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.result.content", Matchers.hasSize(0)));
+
+        advanceProjectPhases(40005617, 200);
+
+        createRequest("?filter=" + encode("creator=heffan&startDateTo=02/16/2015") + "&limit=1000"
+                , MEMBER_HEFFAN_TOKEN)
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.result.content", Matchers.hasSize(267)));
+
+        pushBackProjectPhases(40005617, 200);
+    }
+
+    /**
+     * Tests the endDateTo filter only accuracy.
+     *
+     * @throws Exception if any error occurred.
+     */
+    @Test
+    public void testEndDateTo() throws Exception {
+        createRequest("?filter=" + encode("creator=heffan&endDateTo=08/20/2014") + "&limit=1000"
+                , MEMBER_HEFFAN_TOKEN)
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.result.content", Matchers.hasSize(268)));
+
+        createRequest("?filter=" + encode("creator=heffan&endDateTo=08/19/2014") + "&limit=1000"
+                , MEMBER_HEFFAN_TOKEN)
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.result.content", Matchers.hasSize(0)));
+
+        advanceProjectPhases(40005617, -1);
+
+        createRequest("?filter=" + encode("creator=heffan&endDateTo=08/19/2014") + "&limit=1000"
+                , MEMBER_HEFFAN_TOKEN)
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.result.content", Matchers.hasSize(1)));
+
+        pushBackProjectPhases(40005617, -1);
+    }
+
+    /**
+     * Accuracy tests of the startDateTo and startDateFrom filters together.
+     *
+     * @throws Exception if any error occurred.
+     */
+    @Test
+    public void testStartDateToAndFrom() throws Exception {
+        // startDateFrom 08/01/2014 00:00:00 -> startDateTo 08/01/2014 23:59:59
+        createRequest("?filter=" + encode("creator=heffan&startDateFrom=08/01/2014&startDateTo=08/01/2014") + "&limit=1000"
+                , MEMBER_HEFFAN_TOKEN)
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.result.content", Matchers.hasSize(268)));
+
+        // startDateFrom > startDateTo, the result should be 0
+        createRequest("?filter=" + encode("creator=heffan&startDateFrom=08/01/2014&startDateTo=07/31/2014") + "&limit=1000"
+                , MEMBER_HEFFAN_TOKEN)
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.result.content", Matchers.hasSize(0)));
+
+        advanceProjectPhases(40005617, 1);
+        advanceProjectPhases(40005700, 2);
+        advanceProjectPhases(40005735, 3);
+
+        createRequest("?filter=" + encode("creator=heffan&startDateFrom=08/02/2014&startDateTo=08/04/2014") + "&limit=1000"
+                , MEMBER_HEFFAN_TOKEN)
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.result.content", Matchers.hasSize(3)));
+        createRequest("?filter=" + encode("creator=heffan&startDateFrom=08/03/2014&startDateTo=08/04/2014") + "&limit=1000"
+                , MEMBER_HEFFAN_TOKEN)
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.result.content", Matchers.hasSize(2)));
+        createRequest("?filter=" + encode("creator=heffan&startDateFrom=08/04/2014&startDateTo=08/04/2014") + "&limit=1000"
+                , MEMBER_HEFFAN_TOKEN)
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.result.content", Matchers.hasSize(1)));
+
+        pushBackProjectPhases(40005617, 1);
+        pushBackProjectPhases(40005700, 2);
+        pushBackProjectPhases(40005735, 3);
+
+        createRequest("?filter=" + encode("creator=heffan&startDateFrom=08/02/2014&startDateTo=08/04/2014") + "&limit=1000"
+                , MEMBER_HEFFAN_TOKEN)
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.result.content", Matchers.hasSize(0)));
+        createRequest("?filter=" + encode("creator=heffan&startDateFrom=08/03/2014&startDateTo=08/04/2014") + "&limit=1000"
+                , MEMBER_HEFFAN_TOKEN)
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.result.content", Matchers.hasSize(0)));
+        createRequest("?filter=" + encode("creator=heffan&startDateFrom=08/04/2014&startDateTo=08/04/2014") + "&limit=1000"
+                , MEMBER_HEFFAN_TOKEN)
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.result.content", Matchers.hasSize(0)));
+    }
+
+    /**
+     * Accuracy tests of the endDateTo and endDateFrom filters together.
+     *
+     * @throws Exception if any error occurred.
+     */
+    @Test
+    public void testEndDateToAndFrom() throws Exception {
+        // endDateFrom 08/20/2014 00:00:00 -> endDateTo 08/20/2014 23:59:59
+        createRequest("?filter=" + encode("creator=heffan&endDateFrom=08/20/2014&endDateTo=08/20/2014") + "&limit=1000"
+                , MEMBER_HEFFAN_TOKEN)
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.result.content", Matchers.hasSize(268)));
+
+        // endDateFrom > endDateTo, the result should be 0
+        createRequest("?filter=" + encode("creator=heffan&endDateFrom=08/21/2014&endDateTo=08/20/2014") + "&limit=1000"
+                , MEMBER_HEFFAN_TOKEN)
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.result.content", Matchers.hasSize(0)));
+
+        advanceProjectPhases(40005617, 1);
+        advanceProjectPhases(40005700, 2);
+        advanceProjectPhases(40005735, 3);
+
+        createRequest("?filter=" + encode("creator=heffan&endDateFrom=08/21/2014&endDateTo=08/23/2014") + "&limit=1000"
+                , MEMBER_HEFFAN_TOKEN)
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.result.content", Matchers.hasSize(3)));
+        createRequest("?filter=" + encode("creator=heffan&endDateFrom=08/22/2014&endDateTo=08/23/2014") + "&limit=1000"
+                , MEMBER_HEFFAN_TOKEN)
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.result.content", Matchers.hasSize(2)));
+        createRequest("?filter=" + encode("creator=heffan&endDateFrom=08/23/2014&endDateTo=08/23/2014") + "&limit=1000"
+                , MEMBER_HEFFAN_TOKEN)
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.result.content", Matchers.hasSize(1)));
+
+        pushBackProjectPhases(40005617, 1);
+        pushBackProjectPhases(40005700, 2);
+        pushBackProjectPhases(40005735, 3);
+
+        createRequest("?filter=" + encode("creator=heffan&endDateFrom=08/21/2014&endDateTo=08/23/2014") + "&limit=1000"
+                , MEMBER_HEFFAN_TOKEN)
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.result.content", Matchers.hasSize(0)));
+        createRequest("?filter=" + encode("creator=heffan&endDateFrom=08/22/2014&endDateTo=08/23/2014") + "&limit=1000"
+                , MEMBER_HEFFAN_TOKEN)
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.result.content", Matchers.hasSize(0)));
+        createRequest("?filter=" + encode("creator=heffan&endDateFrom=08/23/2014&endDateTo=08/23/2014") + "&limit=1000"
+                , MEMBER_HEFFAN_TOKEN)
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.result.content", Matchers.hasSize(0)));
+    }
+
+    /**
+     * Accuracy tests of the startDateTo, startDateFrom, endDateTo and endDateFrom filters together.
+     *
+     * @throws Exception if any error occurred.
+     */
+    @Test
+    public void testStartDateEndDateFromTo() throws Exception {
+        // startDateFrom 08/01/2014 00:00:00 -> startDateTo 08/01/2014 23:59:59
+        // endDateFrom 08/20/2014 00:00:00 -> endDateTo 08/20/2014 23:59:59
+        createRequest("?filter=" + encode("creator=heffan&startDateFrom=08/01/2014&startDateTo=08/01/2014&endDateFrom=08/20/2014&endDateTo=08/20/2014") + "&limit=1000"
+                , MEMBER_HEFFAN_TOKEN)
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.result.content", Matchers.hasSize(268)));
+
+        // startDateFrom 08/01/2014 00:00:00 -> startDateTo 08/01/2014 23:59:59
+        // endDateFrom 08/21/2014 00:00:00 -> endDateTo 08/21/2014 23:59:59
+        createRequest("?filter=" + encode("creator=heffan&startDateFrom=08/01/2014&startDateTo=08/01/2014&endDateFrom=08/21/2014&endDateTo=08/21/2014") + "&limit=1000"
+                , MEMBER_HEFFAN_TOKEN)
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.result.content", Matchers.hasSize(0)));
+
+        // startDateFrom 08/02/2014 00:00:00 -> startDateTo 08/02/2014 23:59:59
+        // endDateFrom 08/20/2014 00:00:00 -> endDateTo 08/20/2014 23:59:59
+        createRequest("?filter=" + encode("creator=heffan&startDateFrom=08/02/2014&startDateTo=08/02/2014&endDateFrom=08/20/2014&endDateTo=08/20/2014") + "&limit=1000"
+                , MEMBER_HEFFAN_TOKEN)
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.result.content", Matchers.hasSize(0)));
+
+        advanceProjectPhases(40005617, 1);
+        advanceProjectPhases(40005700, 2);
+        advanceProjectPhases(40005735, 3);
+
+
+        createRequest("?filter=" + encode("creator=heffan&startDateFrom=08/02/2014&startDateTo=08/04/2014&endDateFrom=08/21/2014&endDateTo=08/22/2014") + "&limit=1000"
+                , MEMBER_HEFFAN_TOKEN)
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.result.content", Matchers.hasSize(2)))
+                .andExpect(jsonPath("$.result.content[0].id", is("40005617")))
+                .andExpect(jsonPath("$.result.content[1].id", is("40005700")));
+
+        createRequest("?filter=" + encode("creator=heffan&startDateFrom=08/03/2014&startDateTo=08/04/2014&endDateFrom=08/21/2014&endDateTo=08/22/2014") + "&limit=1000"
+                , MEMBER_HEFFAN_TOKEN)
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.result.content", Matchers.hasSize(1)))
+                .andExpect(jsonPath("$.result.content[0].id", is("40005700")));
+
+        createRequest("?filter=" + encode("creator=heffan&startDateFrom=08/03/2014&startDateTo=08/04/2014&endDateFrom=08/21/2014&endDateTo=08/23/2014") + "&limit=1000"
+                , MEMBER_HEFFAN_TOKEN)
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.result.content", Matchers.hasSize(2)))
+                .andExpect(jsonPath("$.result.content[0].id", is("40005700")))
+                .andExpect(jsonPath("$.result.content[1].id", is("40005735")));
+
+        pushBackProjectPhases(40005617, 1);
+        pushBackProjectPhases(40005700, 2);
+        pushBackProjectPhases(40005735, 3);
+    }
+
 
     /**
      * Sets up a client group with the test user as member.
@@ -1207,6 +1801,14 @@ public class MyChallengesTest extends BaseDirectAPITest {
     }
 
     /**
+     * Delete user permission grant.
+     */
+    private void deleteUserGrant_1() {
+        String delete = "DELETE FROM user_permission_grant WHERE user_permission_grant_id = 40005573";
+        tcsCatalogJdbcTemplate.update(delete, new HashMap<String, Object>());
+    }
+
+    /**
      * Sets up a group with the test user as member.
      */
     private void setupGroupMembership() {
@@ -1219,6 +1821,18 @@ public class MyChallengesTest extends BaseDirectAPITest {
             + "specific_permission, unassigned_on, use_group_default, user_id)"
             + "VALUES (CURRENT, 1,  100000, 100000, 'read', null, 0, 20)", map);
     }
+
+    /**
+     * Delete all the data related to the created new group.
+     */
+    private void deleteGroupMembership() {
+        HashMap<String, Object> map = new HashMap<String, Object>();
+        tcsCatalogJdbcTemplate.update("delete from group_member where group_id = 100000", map);
+        tcsCatalogJdbcTemplate.update("delete from group_associated_direct_projects where group_id = 100000", map);
+        tcsCatalogJdbcTemplate.update("delete from group_associated_billing_accounts where group_id = 100000", map);
+        tcsCatalogJdbcTemplate.update("delete from customer_group where group_id = 100000", map);
+    }
+
 
     /**
      * Sets the test group member as inactive.
@@ -1245,4 +1859,50 @@ public class MyChallengesTest extends BaseDirectAPITest {
             new HashMap<String, Object>());
     }
 
+    /**
+     * Move the phases time of the specified project forward the specified num of days
+     *
+     * @param projectId the project id
+     * @param numOfDays the number of days.
+     */
+    private void advanceProjectPhases(int projectId, int numOfDays) {
+        tcsCatalogJdbcTemplate.update(
+                "update project_phase set \n" +
+                        "fixed_start_time = fixed_start_time + " + numOfDays + " units day,\n" +
+                        "scheduled_start_time = scheduled_start_time  + " + numOfDays + " units day,\n" +
+                        "scheduled_end_time = scheduled_end_time +  " + numOfDays + " units day,\n" +
+                        "actual_start_time = actual_start_time  + " + numOfDays + " units day,\n" +
+                        "actual_end_time = actual_end_time  + " + numOfDays + " units day\n" +
+                        "where project_id = " + projectId,
+                new HashMap<String, Object>());
+    }
+
+    /**
+     * Move the phases time of the specified project backward the specified num of days
+     *
+     * @param projectId the project id
+     * @param numOfDays the number of days.
+     */
+    private void pushBackProjectPhases(int projectId, int numOfDays) {
+        tcsCatalogJdbcTemplate.update(
+                "update project_phase set \n" +
+                        "fixed_start_time = fixed_start_time - " + numOfDays + " units day,\n" +
+                        "scheduled_start_time = scheduled_start_time - " + numOfDays + " units day,\n" +
+                        "scheduled_end_time = scheduled_end_time - " + numOfDays + " units day,\n" +
+                        "actual_start_time = actual_start_time - " + numOfDays + " units day,\n" +
+                        "actual_end_time = actual_end_time - " + numOfDays + " units day\n" +
+                        "where project_id = " + projectId,
+                new HashMap<String, Object>());
+    }
+
+    /**
+     * Gets the base URL of the challenges API.
+     *
+     * @return the base URL of the challenges API.
+     * @since 1.1
+     */
+    @Override
+    protected String getBaseURL() {
+        return BASE_URL;
+    }
 }

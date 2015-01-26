@@ -1,18 +1,7 @@
 /*
- * Copyright (C) 2014 TopCoder Inc., All Rights Reserved.
+ * Copyright (C) 2014 - 2015 TopCoder Inc., All Rights Reserved.
  */
 package com.topcoder.direct.rest;
-
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.UnsupportedEncodingException;
-import java.net.URLEncoder;
-import java.util.HashMap;
-import java.util.Map;
 
 import org.json.JSONObject;
 import org.junit.Before;
@@ -28,9 +17,24 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.web.WebAppConfiguration;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
+import org.springframework.test.web.servlet.ResultMatcher;
 import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
+
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
+import java.util.HashMap;
+import java.util.Map;
+
+import static org.hamcrest.Matchers.is;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
+
 
 /**
  * <p>
@@ -38,8 +42,27 @@ import org.springframework.web.context.WebApplicationContext;
  *     This class also contains the helpful method for Test class.
  * </p>
  *
- * @author Ghost_141, TCSASSEMBLER
- * @version 1.1
+ *
+ * <p>
+ * Version 1.2 (TopCoder Direct API - Project Retrieval API)
+ * <ul>
+ * <li>Added {@link #createRequest(String, String)}</li>
+ * <li>Added {@link #assertBadResponse(String, org.springframework.test.web.servlet.ResultMatcher, Integer, String, String)}</li>
+ * <li>Added {@link #getBaseURL()}</li>
+ * <li>Added {@link #MEMBER_DOK_TOKEN}</li>
+ * </ul>
+ * </p>
+ *
+ * <p>
+ * Version 1.3 (Direct API - Fix Challenges API Integration Tests)
+ * <ul>
+ *     <li>Updated {@link #readFile(String)} to static</li>
+ *     <li>Updated {@link #loadDataFromFile(String, org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate)} to static</li>
+ * </ul>
+ * </p>
+ *
+ * @author Ghost_141, GreatKevin
+ * @version 1.3
  * @since 1.0 (TopCoder Direct API Setup and implement My Created Challenges API)
  */
 @RunWith(SpringJUnit4ClassRunner.class)
@@ -57,6 +80,14 @@ public abstract class BaseDirectAPITest {
      */
     @Value("${superToken}")
     protected String MEMBER_SUPER_TOKEN;
+
+    /**
+     * The token for topcoder member "dok_tester".
+     *
+     * @since 1.2
+     */
+    @Value("${testerToken}")
+    protected String MEMBER_DOK_TOKEN;
 
     /**
      * The jdbc template for tcs_catalog database.
@@ -105,15 +136,6 @@ public abstract class BaseDirectAPITest {
     private WebApplicationContext wac;
 
     /**
-     * The token for topcoder member "dok_tester".
-     * A user configured with no access to any projects.
-     *
-     * @since 1.1
-     */
-    @Value("${testerToken}")
-    private String noProjectMember;
-
-    /**
      * The setup method of this test.
      * @throws Exception if any error occurred.
      */
@@ -144,7 +166,7 @@ public abstract class BaseDirectAPITest {
      * @return The file content.
      * @throws IOException if any error occurred while reading file.
      */
-    protected String readFile(String filePath) throws IOException {
+    protected static String readFile(String filePath) throws IOException {
         InputStream inputStream = null;
         org.springframework.core.io.Resource resource;
         BufferedReader bufferedReader = null;
@@ -176,6 +198,7 @@ public abstract class BaseDirectAPITest {
      */
     protected void assertResponse(String expectedFilePath, ResultActions actualAPIResult) throws Exception {
         String actualResult = actualAPIResult.andReturn().getResponse().getContentAsString();
+        System.out.println(actualResult);
         JSONObject resultObj = new JSONObject(actualResult);
         JSONObject expectedResultObj = new JSONObject(readFile(expectedFilePath));
 
@@ -207,7 +230,7 @@ public abstract class BaseDirectAPITest {
      * @param jdbcTemplate - The jdbc template used to execute the sql.
      * @throws IOException - if any error occurred while reading the file.
      */
-    protected void loadDataFromFile(String fileName, NamedParameterJdbcTemplate jdbcTemplate) throws IOException {
+    protected static void loadDataFromFile(String fileName, NamedParameterJdbcTemplate jdbcTemplate) throws IOException {
         InputStream inputStream = null;
         org.springframework.core.io.Resource resource;
         BufferedReader bufferedReader = null;
@@ -261,6 +284,48 @@ public abstract class BaseDirectAPITest {
      * @return the noProjectMember
      */
     protected String getNoProjectMember() {
-        return noProjectMember;
+        return MEMBER_DOK_TOKEN;
     }
+
+    /**
+     * Create http request.
+     *
+     * @param url   The url
+     * @param token The jwt token passed to api.
+     * @return The http request.
+     * @throws Exception if any error occurred.
+     * @since 1.1
+     */
+    protected ResultActions createRequest(String url, String token) throws Exception {
+        return this.createGETRequest(getBaseURL() + url, token);
+    }
+
+    /**
+     * The helper method that used to perform failure test.
+     *
+     * @param url            the url to call
+     * @param status         the expected HTTP status.
+     * @param expectedStatus the content expected status.
+     * @param token          The jwt token passed to api.
+     * @param expectedErrMsg The expected error message.
+     * @throws Exception if any error occurred.
+     * @since 1.1
+     */
+    protected void assertBadResponse(String url, ResultMatcher status, Integer expectedStatus, String token,
+                                     String expectedErrMsg) throws Exception {
+        ResultActions req = createRequest(url, token);
+        req.andExpect(status);
+        req.andExpect(jsonPath("$.result.status", is(expectedStatus)));
+        if (isNotNullNorEmpty(expectedErrMsg)) {
+            req.andExpect(jsonPath("$.result.content.message").value(expectedErrMsg));
+        }
+    }
+
+    /**
+     * Gets the base URL used for testing.
+     *
+     * @return the base URL.
+     * @since 1.1
+     */
+    protected abstract String getBaseURL();
 }

@@ -1,0 +1,40 @@
+{
+  "id": "23681f5f:14ac320cce2:-7ff1",
+  "result": {
+    "success": true,
+    "status": 200,
+    "metadata": {
+      "fields": null,
+      "totalCount": 1
+    },
+    "content": [
+      {
+        "id": "30000001",
+        "projectName": "Client 30000001 Billing Account 1 Web Application Project 1",
+        "projectStatusId": 2,
+        "projectStatusName": "Inactive",
+        "projectCreatedDate": "12/31/2014 01:12",
+        "projectCreatedBy": 132458,
+        "projectLastUpdatedDate": "12/31/2014 07:18",
+        "billings": [
+          {
+            "id": "30000001",
+
+            "name": "Client 30000001 Major Billing Account 1"
+          },
+          {
+            "id": "30000002",
+
+            "name": "Client 30000001 Minor Billing Account 2"
+          },
+          {
+            "id": "30000003",
+
+            "name": "Client 30000001 Secret Billing Account 3"
+          }
+        ]
+      }
+    ]
+  },
+  "version": "v2"
+}

@@ -1,0 +1,7 @@
+SELECT
+dpa.project_id as project_id,
+dpa.billing_account_id as billing_id,
+billing.name as billing_name
+FROM corporate_oltp\:direct_project_account dpa, tt_project billing
+WHERE dpa.project_id IN (:project_ids)
+AND dpa.billing_account_id = billing.project_id

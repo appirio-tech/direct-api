@@ -1,0 +1,535 @@
+{
+  "id": "-52e0954c:14ae7f2b20b:-7ffb",
+  "result": {
+    "success": true,
+    "status": 200,
+    "metadata": {
+      "fields": null,
+      "totalCount": 268
+    },
+    "content": [
+      {
+        "accountId": null,
+        "id": "40005740",
+        "challengeName": "Client 40005502 Billing Account 2 Project 6 Assembly Competition Contest 240",
+        "challengeType": "Assembly Competition",
+        "clientName": "Client 40005502",
+        "clientId": 40005502,
+        "billingName": "Client 40005502 Billing Account 2",
+        "billingId": 40005504,
+        "directProjectName": "Client 40005502 Billing Account 2 Project 6",
+        "directProjectId": 40005524,
+        "challengeTechnologies": [
+          ".NET 3.5",
+          "C#",
+          "HTTP",
+          "MySQL",
+          "VB.NET"
+        ],
+        "challengePlatforms": [],
+        "challengeStartDate": "08/01/2014 20:00",
+        "challengeEndDate": "08/20/2014 20:00",
+        "drPoints": 360,
+        "reviewCost": null,
+        "challengeFee": null,
+        "challengeStatus": "Cancelled - Requirements Infeasible",
+        "challengeCreator": "heffan",
+        "prizes": [
+          {
+            "accountId": null,
+            "id": "40006194",
+            "placement": 1,
+            "numberOfPrize": null,
+            "prizeAmount": 800,
+            "prizeType": 15,
+            "challengeId": 40005740
+          },
+          {
+            "accountId": null,
+            "id": "40006195",
+            "placement": 2,
+            "numberOfPrize": null,
+            "prizeAmount": 400,
+            "prizeType": 15,
+            "challengeId": 40005740
+          }
+        ],
+        "checkPointPrizes": [],
+        "totalPrize": 1200,
+        "reliabilityBonus": 240
+      },
+      {
+        "accountId": null,
+        "id": "40005739",
+        "challengeName": "Client 40005502 Billing Account 2 Project 6 Print/Presentation Contest 239",
+        "challengeType": "Print/Presentation",
+        "clientName": "Client 40005502",
+        "clientId": 40005502,
+        "billingName": "Client 40005502 Billing Account 2",
+        "billingId": 40005504,
+        "directProjectName": "Client 40005502 Billing Account 2 Project 6",
+        "directProjectId": 40005524,
+        "challengeTechnologies": [],
+        "challengePlatforms": [],
+        "challengeStartDate": "08/01/2014 20:00",
+        "challengeEndDate": "08/20/2014 20:00",
+        "drPoints": 510,
+        "reviewCost": null,
+        "challengeFee": null,
+        "challengeStatus": "Draft",
+        "challengeCreator": "heffan",
+        "prizes": [
+          {
+            "accountId": null,
+            "id": "40006191",
+            "placement": 1,
+            "numberOfPrize": null,
+            "prizeAmount": 1700,
+            "prizeType": 15,
+            "challengeId": 40005739
+          },
+          {
+            "accountId": null,
+            "id": "40006192",
+            "placement": 2,
+            "numberOfPrize": null,
+            "prizeAmount": 1400,
+            "prizeType": 15,
+            "challengeId": 40005739
+          }
+        ],
+        "checkPointPrizes": [
+          {
+            "accountId": null,
+            "id": "40006193",
+            "placement": null,
+            "numberOfPrize": 5,
+            "prizeAmount": 73,
+            "prizeType": 14,
+            "challengeId": 40005739
+          }
+        ],
+        "totalPrize": 3465,
+        "reliabilityBonus": 0
+      },
+      {
+        "accountId": null,
+        "id": "40005738",
+        "challengeName": "Client 40005502 Billing Account 2 Project 6 Idea Generation Contest 238",
+        "challengeType": "Idea Generation",
+        "clientName": "Client 40005502",
+        "clientId": 40005502,
+        "billingName": "Client 40005502 Billing Account 2",
+        "billingId": 40005504,
+        "directProjectName": "Client 40005502 Billing Account 2 Project 6",
+        "directProjectId": 40005524,
+        "challengeTechnologies": [],
+        "challengePlatforms": [],
+        "challengeStartDate": "08/01/2014 20:00",
+        "challengeEndDate": "08/20/2014 20:00",
+        "drPoints": 510,
+        "reviewCost": null,
+        "challengeFee": null,
+        "challengeStatus": "Cancelled - Zero Submissions",
+        "challengeCreator": "heffan",
+        "prizes": [
+          {
+            "accountId": null,
+            "id": "40006188",
+            "placement": 1,
+            "numberOfPrize": null,
+            "prizeAmount": 1700,
+            "prizeType": 15,
+            "challengeId": 40005738
+          },
+          {
+            "accountId": null,
+            "id": "40006189",
+            "placement": 2,
+            "numberOfPrize": null,
+            "prizeAmount": 1400,
+            "prizeType": 15,
+            "challengeId": 40005738
+          },
+          {
+            "accountId": null,
+            "id": "40006190",
+            "placement": 3,
+            "numberOfPrize": null,
+            "prizeAmount": 1100,
+            "prizeType": 15,
+            "challengeId": 40005738
+          }
+        ],
+        "checkPointPrizes": [],
+        "totalPrize": 4200,
+        "reliabilityBonus": 0
+      },
+      {
+        "accountId": null,
+        "id": "40005737",
+        "challengeName": "Client 40005502 Billing Account 2 Project 6 Content Creation Contest 237",
+        "challengeType": "Content Creation",
+        "clientName": "Client 40005502",
+        "clientId": 40005502,
+        "billingName": "Client 40005502 Billing Account 2",
+        "billingId": 40005504,
+        "directProjectName": "Client 40005502 Billing Account 2 Project 6",
+        "directProjectId": 40005524,
+        "challengeTechnologies": [],
+        "challengePlatforms": [],
+        "challengeStartDate": "08/01/2014 20:00",
+        "challengeEndDate": "08/20/2014 20:00",
+        "drPoints": 450,
+        "reviewCost": null,
+        "challengeFee": null,
+        "challengeStatus": "Cancelled - Zero Registrations",
+        "challengeCreator": "heffan",
+        "prizes": [
+          {
+            "accountId": null,
+            "id": "40006186",
+            "placement": 1,
+            "numberOfPrize": null,
+            "prizeAmount": 1000,
+            "prizeType": 15,
+            "challengeId": 40005737
+          },
+          {
+            "accountId": null,
+            "id": "40006187",
+            "placement": 2,
+            "numberOfPrize": null,
+            "prizeAmount": 500,
+            "prizeType": 15,
+            "challengeId": 40005737
+          }
+        ],
+        "checkPointPrizes": [],
+        "totalPrize": 1500,
+        "reliabilityBonus": 300
+      },
+      {
+        "accountId": null,
+        "id": "40005736",
+        "challengeName": "Client 40005502 Billing Account 2 Project 6 Web Design Contest 236",
+        "challengeType": "Web Design",
+        "clientName": "Client 40005502",
+        "clientId": 40005502,
+        "billingName": "Client 40005502 Billing Account 2",
+        "billingId": 40005504,
+        "directProjectName": "Client 40005502 Billing Account 2 Project 6",
+        "directProjectId": 40005524,
+        "challengeTechnologies": [],
+        "challengePlatforms": [],
+        "challengeStartDate": "08/01/2014 20:00",
+        "challengeEndDate": "08/20/2014 20:00",
+        "drPoints": 510,
+        "reviewCost": null,
+        "challengeFee": null,
+        "challengeStatus": "Active",
+        "challengeCreator": "heffan",
+        "prizes": [
+          {
+            "accountId": null,
+            "id": "40006182",
+            "placement": 1,
+            "numberOfPrize": null,
+            "prizeAmount": 1700,
+            "prizeType": 15,
+            "challengeId": 40005736
+          },
+          {
+            "accountId": null,
+            "id": "40006183",
+            "placement": 2,
+            "numberOfPrize": null,
+            "prizeAmount": 1400,
+            "prizeType": 15,
+            "challengeId": 40005736
+          },
+          {
+            "accountId": null,
+            "id": "40006184",
+            "placement": 3,
+            "numberOfPrize": null,
+            "prizeAmount": 1100,
+            "prizeType": 15,
+            "challengeId": 40005736
+          },
+          {
+            "accountId": null,
+            "id": "40006185",
+            "placement": 4,
+            "numberOfPrize": null,
+            "prizeAmount": 800,
+            "prizeType": 15,
+            "challengeId": 40005736
+          }
+        ],
+        "checkPointPrizes": [],
+        "totalPrize": 5000,
+        "reliabilityBonus": 0
+      },
+      {
+        "accountId": null,
+        "id": "40005735",
+        "challengeName": "Client 40005502 Billing Account 2 Project 6 Test Scenarios Contest 235",
+        "challengeType": "Test Scenarios",
+        "clientName": "Client 40005502",
+        "clientId": 40005502,
+        "billingName": "Client 40005502 Billing Account 2",
+        "billingId": 40005504,
+        "directProjectName": "Client 40005502 Billing Account 2 Project 6",
+        "directProjectId": 40005524,
+        "challengeTechnologies": [
+          "XUL"
+        ],
+        "challengePlatforms": [],
+        "challengeStartDate": "08/01/2014 20:00",
+        "challengeEndDate": "08/20/2014 20:00",
+        "drPoints": 450,
+        "reviewCost": null,
+        "challengeFee": null,
+        "challengeStatus": "Completed",
+        "challengeCreator": "heffan",
+        "prizes": [
+          {
+            "accountId": null,
+            "id": "40006179",
+            "placement": 1,
+            "numberOfPrize": null,
+            "prizeAmount": 1000,
+            "prizeType": 15,
+            "challengeId": 40005735
+          },
+          {
+            "accountId": null,
+            "id": "40006180",
+            "placement": 2,
+            "numberOfPrize": null,
+            "prizeAmount": 500,
+            "prizeType": 15,
+            "challengeId": 40005735
+          }
+        ],
+        "checkPointPrizes": [
+          {
+            "accountId": null,
+            "id": "40006181",
+            "placement": null,
+            "numberOfPrize": 3,
+            "prizeAmount": 90,
+            "prizeType": 14,
+            "challengeId": 40005735
+          }
+        ],
+        "totalPrize": 1770,
+        "reliabilityBonus": 300
+      },
+      {
+        "accountId": null,
+        "id": "40005734",
+        "challengeName": "Client 40005502 Billing Account 2 Project 6 Wireframes Contest 234",
+        "challengeType": "Wireframes",
+        "clientName": "Client 40005502",
+        "clientId": 40005502,
+        "billingName": "Client 40005502 Billing Account 2",
+        "billingId": 40005504,
+        "directProjectName": "Client 40005502 Billing Account 2 Project 6",
+        "directProjectId": 40005524,
+        "challengeTechnologies": [],
+        "challengePlatforms": [],
+        "challengeStartDate": "08/01/2014 20:00",
+        "challengeEndDate": "08/20/2014 20:00",
+        "drPoints": 510,
+        "reviewCost": null,
+        "challengeFee": null,
+        "challengeStatus": "Completed",
+        "challengeCreator": "heffan",
+        "prizes": [
+          {
+            "accountId": null,
+            "id": "40006175",
+            "placement": 1,
+            "numberOfPrize": null,
+            "prizeAmount": 1700,
+            "prizeType": 15,
+            "challengeId": 40005734
+          },
+          {
+            "accountId": null,
+            "id": "40006176",
+            "placement": 2,
+            "numberOfPrize": null,
+            "prizeAmount": 1400,
+            "prizeType": 15,
+            "challengeId": 40005734
+          },
+          {
+            "accountId": null,
+            "id": "40006177",
+            "placement": 3,
+            "numberOfPrize": null,
+            "prizeAmount": 1100,
+            "prizeType": 15,
+            "challengeId": 40005734
+          },
+          {
+            "accountId": null,
+            "id": "40006178",
+            "placement": 4,
+            "numberOfPrize": null,
+            "prizeAmount": 800,
+            "prizeType": 15,
+            "challengeId": 40005734
+          }
+        ],
+        "checkPointPrizes": [],
+        "totalPrize": 5000,
+        "reliabilityBonus": 0
+      },
+      {
+        "accountId": null,
+        "id": "40005733",
+        "challengeName": "Client 40005502 Billing Account 2 Project 6 Development Contest 233",
+        "challengeType": "Development",
+        "clientName": "Client 40005502",
+        "clientId": 40005502,
+        "billingName": "Client 40005502 Billing Account 2",
+        "billingId": 40005504,
+        "directProjectName": "Client 40005502 Billing Account 2 Project 6",
+        "directProjectId": 40005524,
+        "challengeTechnologies": [
+          ".NET",
+          "COM"
+        ],
+        "challengePlatforms": [],
+        "challengeStartDate": "08/01/2014 20:00",
+        "challengeEndDate": "08/20/2014 20:00",
+        "drPoints": 360,
+        "reviewCost": null,
+        "challengeFee": null,
+        "challengeStatus": "Completed",
+        "challengeCreator": "heffan",
+        "prizes": [
+          {
+            "accountId": null,
+            "id": "40006173",
+            "placement": 1,
+            "numberOfPrize": null,
+            "prizeAmount": 800,
+            "prizeType": 15,
+            "challengeId": 40005733
+          },
+          {
+            "accountId": null,
+            "id": "40006174",
+            "placement": 2,
+            "numberOfPrize": null,
+            "prizeAmount": 400,
+            "prizeType": 15,
+            "challengeId": 40005733
+          }
+        ],
+        "checkPointPrizes": [],
+        "totalPrize": 1200,
+        "reliabilityBonus": 240
+      },
+      {
+        "accountId": null,
+        "id": "40005732",
+        "challengeName": "Client 40005502 Billing Account 2 Project 6 Test Suites Contest 232",
+        "challengeType": "Test Suites",
+        "clientName": "Client 40005502",
+        "clientId": 40005502,
+        "billingName": "Client 40005502 Billing Account 2",
+        "billingId": 40005504,
+        "directProjectName": "Client 40005502 Billing Account 2 Project 6",
+        "directProjectId": 40005524,
+        "challengeTechnologies": [
+          "Flex",
+          "JMS",
+          "SQL Server 2005",
+          "Windows Communication Foundation"
+        ],
+        "challengePlatforms": [],
+        "challengeStartDate": "08/01/2014 20:00",
+        "challengeEndDate": "08/20/2014 20:00",
+        "drPoints": 360,
+        "reviewCost": null,
+        "challengeFee": null,
+        "challengeStatus": "Completed",
+        "challengeCreator": "heffan",
+        "prizes": [
+          {
+            "accountId": null,
+            "id": "40006171",
+            "placement": 1,
+            "numberOfPrize": null,
+            "prizeAmount": 800,
+            "prizeType": 15,
+            "challengeId": 40005732
+          },
+          {
+            "accountId": null,
+            "id": "40006172",
+            "placement": 2,
+            "numberOfPrize": null,
+            "prizeAmount": 400,
+            "prizeType": 15,
+            "challengeId": 40005732
+          }
+        ],
+        "checkPointPrizes": [],
+        "totalPrize": 1200,
+        "reliabilityBonus": 240
+      },
+      {
+        "accountId": null,
+        "id": "40005731",
+        "challengeName": "Client 40005502 Billing Account 2 Project 6 Copilot Posting Contest 231",
+        "challengeType": "Copilot Posting",
+        "clientName": "Client 40005502",
+        "clientId": 40005502,
+        "billingName": "Client 40005502 Billing Account 2",
+        "billingId": 40005504,
+        "directProjectName": "Client 40005502 Billing Account 2 Project 6",
+        "directProjectId": 40005524,
+        "challengeTechnologies": [],
+        "challengePlatforms": [],
+        "challengeStartDate": "08/01/2014 20:00",
+        "challengeEndDate": "08/20/2014 20:00",
+        "drPoints": 450,
+        "reviewCost": null,
+        "challengeFee": null,
+        "challengeStatus": "Completed",
+        "challengeCreator": "heffan",
+        "prizes": [
+          {
+            "accountId": null,
+            "id": "40006169",
+            "placement": 1,
+            "numberOfPrize": null,
+            "prizeAmount": 1000,
+            "prizeType": 15,
+            "challengeId": 40005731
+          },
+          {
+            "accountId": null,
+            "id": "40006170",
+            "placement": 2,
+            "numberOfPrize": null,
+            "prizeAmount": 500,
+            "prizeType": 15,
+            "challengeId": 40005731
+          }
+        ],
+        "checkPointPrizes": [],
+        "totalPrize": 1500,
+        "reliabilityBonus": 300
+      }
+    ]
+  },
+  "version": "v2"
+}

@@ -1,0 +1,391 @@
+{
+  "id": "-52e0954c:14ae7f2b20b:-7fdf",
+  "result": {
+    "success": true,
+    "status": 200,
+    "metadata": {
+      "fields": null,
+      "totalCount": 41
+    },
+    "content": [
+      {
+        "accountId": null,
+        "id": "40005679",
+        "challengeName": "Client 40005502 Billing Account 1 Project 6 UI Prototypes Contest 179",
+        "challengeType": "UI Prototypes",
+        "clientName": "Client 40005502",
+        "clientId": 40005502,
+        "billingName": "Client 40005502 Billing Account 1",
+        "billingId": 40005503,
+        "directProjectName": "Client 40005502 Billing Account 1 Project 6",
+        "directProjectId": 40005518,
+        "challengeTechnologies": [
+          "Dojo",
+          "J2EE"
+        ],
+        "challengePlatforms": [],
+        "challengeStartDate": "08/01/2014 20:00",
+        "challengeEndDate": "08/20/2014 20:00",
+        "drPoints": 540,
+        "reviewCost": null,
+        "challengeFee": null,
+        "challengeStatus": "Cancelled - Failed Screening",
+        "challengeCreator": "heffan",
+        "prizes": [
+          {
+            "accountId": null,
+            "id": "40006015",
+            "placement": 1,
+            "numberOfPrize": null,
+            "prizeAmount": 1200,
+            "prizeType": 15,
+            "challengeId": 40005679
+          },
+          {
+            "accountId": null,
+            "id": "40006016",
+            "placement": 2,
+            "numberOfPrize": null,
+            "prizeAmount": 600,
+            "prizeType": 15,
+            "challengeId": 40005679
+          }
+        ],
+        "checkPointPrizes": [
+          {
+            "accountId": null,
+            "id": "40006017",
+            "placement": null,
+            "numberOfPrize": 4,
+            "prizeAmount": 82,
+            "prizeType": 14,
+            "challengeId": 40005679
+          }
+        ],
+        "totalPrize": 2128,
+        "reliabilityBonus": 380
+      },
+      {
+        "accountId": null,
+        "id": "40005646",
+        "challengeName": "Client 40005502 Billing Account 1 Project 3 Test Scenarios Contest 146",
+        "challengeType": "Test Scenarios",
+        "clientName": "Client 40005502",
+        "clientId": 40005502,
+        "billingName": "Client 40005502 Billing Account 1",
+        "billingId": 40005503,
+        "directProjectName": "Client 40005502 Billing Account 1 Project 3",
+        "directProjectId": 40005515,
+        "challengeTechnologies": [
+          "ADO.NET",
+          "J2EE",
+          "Objective C",
+          "Ruby"
+        ],
+        "challengePlatforms": [],
+        "challengeStartDate": "08/01/2014 20:00",
+        "challengeEndDate": "08/20/2014 20:00",
+        "drPoints": 450,
+        "reviewCost": null,
+        "challengeFee": null,
+        "challengeStatus": "Active",
+        "challengeCreator": "heffan",
+        "prizes": [
+          {
+            "accountId": null,
+            "id": "40005919",
+            "placement": 1,
+            "numberOfPrize": null,
+            "prizeAmount": 1000,
+            "prizeType": 15,
+            "challengeId": 40005646
+          },
+          {
+            "accountId": null,
+            "id": "40005920",
+            "placement": 2,
+            "numberOfPrize": null,
+            "prizeAmount": 500,
+            "prizeType": 15,
+            "challengeId": 40005646
+          }
+        ],
+        "checkPointPrizes": [],
+        "totalPrize": 1500,
+        "reliabilityBonus": 300
+      },
+      {
+        "accountId": null,
+        "id": "40005617",
+        "challengeName": "Client 40005501 Billing Account 2 Project 6 Architecture Contest 117",
+        "challengeType": "Architecture",
+        "clientName": "Client 40005501",
+        "clientId": 40005501,
+        "billingName": "Client 40005501 Billing Account 2",
+        "billingId": 40005502,
+        "directProjectName": "Client 40005501 Billing Account 2 Project 6",
+        "directProjectId": 40005512,
+        "challengeTechnologies": [
+          "Hibernate",
+          "J2EE",
+          "JSON",
+          "JavaBean",
+          "SQL Server 2000"
+        ],
+        "challengePlatforms": [],
+        "challengeStartDate": "08/01/2014 20:00",
+        "challengeEndDate": "08/20/2014 20:00",
+        "drPoints": 450,
+        "reviewCost": null,
+        "challengeFee": null,
+        "challengeStatus": "Active",
+        "challengeCreator": "heffan",
+        "prizes": [
+          {
+            "accountId": null,
+            "id": "40005836",
+            "placement": 1,
+            "numberOfPrize": null,
+            "prizeAmount": 1000,
+            "prizeType": 15,
+            "challengeId": 40005617
+          },
+          {
+            "accountId": null,
+            "id": "40005837",
+            "placement": 2,
+            "numberOfPrize": null,
+            "prizeAmount": 500,
+            "prizeType": 15,
+            "challengeId": 40005617
+          }
+        ],
+        "checkPointPrizes": [
+          {
+            "accountId": null,
+            "id": "40005838",
+            "placement": null,
+            "numberOfPrize": 4,
+            "prizeAmount": 77,
+            "prizeType": 14,
+            "challengeId": 40005617
+          }
+        ],
+        "totalPrize": 1808,
+        "reliabilityBonus": 300
+      },
+      {
+        "accountId": null,
+        "id": "40005541",
+        "challengeName": "Client 40005501 Billing Account 1 Project 5 Development Contest 41",
+        "challengeType": "Development",
+        "clientName": "Client 40005501",
+        "clientId": 40005501,
+        "billingName": "Client 40005501 Billing Account 1",
+        "billingId": 40005501,
+        "directProjectName": "Client 40005501 Billing Account 1 Project 5",
+        "directProjectId": 40005505,
+        "challengeTechnologies": [
+          "J2EE",
+          "JDBC",
+          "Oracle 9i",
+          "XML"
+        ],
+        "challengePlatforms": [],
+        "challengeStartDate": "08/01/2014 20:00",
+        "challengeEndDate": "08/20/2014 20:00",
+        "drPoints": 450,
+        "reviewCost": null,
+        "challengeFee": null,
+        "challengeStatus": "Completed",
+        "challengeCreator": "heffan",
+        "prizes": [
+          {
+            "accountId": null,
+            "id": "40005622",
+            "placement": 1,
+            "numberOfPrize": null,
+            "prizeAmount": 1000,
+            "prizeType": 15,
+            "challengeId": 40005541
+          },
+          {
+            "accountId": null,
+            "id": "40005623",
+            "placement": 2,
+            "numberOfPrize": null,
+            "prizeAmount": 500,
+            "prizeType": 15,
+            "challengeId": 40005541
+          }
+        ],
+        "checkPointPrizes": [],
+        "totalPrize": 1500,
+        "reliabilityBonus": 300
+      },
+      {
+        "accountId": null,
+        "id": "981",
+        "challengeName": "Component 99",
+        "challengeType": "Assembly Competition",
+        "clientName": null,
+        "clientId": 0,
+        "billingName": null,
+        "billingId": 0,
+        "directProjectName": null,
+        "directProjectId": null,
+        "challengeTechnologies": [
+          "J2EE"
+        ],
+        "challengePlatforms": [],
+        "challengeStartDate": "08/01/2014 20:00",
+        "challengeEndDate": "08/20/2014 20:00",
+        "drPoints": 0,
+        "reviewCost": null,
+        "challengeFee": null,
+        "challengeStatus": "Draft",
+        "challengeCreator": "heffan",
+        "prizes": null,
+        "checkPointPrizes": null,
+        "totalPrize": 0,
+        "reliabilityBonus": 0
+      },
+      {
+        "accountId": null,
+        "id": "961",
+        "challengeName": "Component 97",
+        "challengeType": "Architecture",
+        "clientName": null,
+        "clientId": 0,
+        "billingName": null,
+        "billingId": 0,
+        "directProjectName": null,
+        "directProjectId": null,
+        "challengeTechnologies": [
+          "J2EE"
+        ],
+        "challengePlatforms": [],
+        "challengeStartDate": "08/01/2014 20:00",
+        "challengeEndDate": "08/20/2014 20:00",
+        "drPoints": 0,
+        "reviewCost": null,
+        "challengeFee": null,
+        "challengeStatus": "Draft",
+        "challengeCreator": "heffan",
+        "prizes": null,
+        "checkPointPrizes": null,
+        "totalPrize": 0,
+        "reliabilityBonus": 0
+      },
+      {
+        "accountId": null,
+        "id": "921",
+        "challengeName": "Component 93",
+        "challengeType": "Architecture",
+        "clientName": null,
+        "clientId": 0,
+        "billingName": null,
+        "billingId": 0,
+        "directProjectName": null,
+        "directProjectId": null,
+        "challengeTechnologies": [
+          "J2EE"
+        ],
+        "challengePlatforms": [],
+        "challengeStartDate": "08/01/2014 20:00",
+        "challengeEndDate": "08/20/2014 20:00",
+        "drPoints": 0,
+        "reviewCost": null,
+        "challengeFee": null,
+        "challengeStatus": "Draft",
+        "challengeCreator": "heffan",
+        "prizes": null,
+        "checkPointPrizes": null,
+        "totalPrize": 0,
+        "reliabilityBonus": 0
+      },
+      {
+        "accountId": null,
+        "id": "911",
+        "challengeName": "Component 92",
+        "challengeType": "Design",
+        "clientName": null,
+        "clientId": 0,
+        "billingName": null,
+        "billingId": 0,
+        "directProjectName": null,
+        "directProjectId": null,
+        "challengeTechnologies": [
+          "J2EE"
+        ],
+        "challengePlatforms": [],
+        "challengeStartDate": "08/01/2014 20:00",
+        "challengeEndDate": "08/20/2014 20:00",
+        "drPoints": 0,
+        "reviewCost": null,
+        "challengeFee": null,
+        "challengeStatus": "Draft",
+        "challengeCreator": "heffan",
+        "prizes": null,
+        "checkPointPrizes": null,
+        "totalPrize": 0,
+        "reliabilityBonus": 0
+      },
+      {
+        "accountId": null,
+        "id": "901",
+        "challengeName": "Component 91",
+        "challengeType": "Development",
+        "clientName": null,
+        "clientId": 0,
+        "billingName": null,
+        "billingId": 0,
+        "directProjectName": null,
+        "directProjectId": null,
+        "challengeTechnologies": [
+          "J2EE"
+        ],
+        "challengePlatforms": [],
+        "challengeStartDate": "08/01/2014 20:00",
+        "challengeEndDate": "08/20/2014 20:00",
+        "drPoints": 0,
+        "reviewCost": null,
+        "challengeFee": null,
+        "challengeStatus": "Draft",
+        "challengeCreator": "heffan",
+        "prizes": null,
+        "checkPointPrizes": null,
+        "totalPrize": 0,
+        "reliabilityBonus": 0
+      },
+      {
+        "accountId": null,
+        "id": "891",
+        "challengeName": "Component 90",
+        "challengeType": "Assembly Competition",
+        "clientName": null,
+        "clientId": 0,
+        "billingName": null,
+        "billingId": 0,
+        "directProjectName": null,
+        "directProjectId": null,
+        "challengeTechnologies": [
+          "J2EE"
+        ],
+        "challengePlatforms": [],
+        "challengeStartDate": "08/01/2014 20:00",
+        "challengeEndDate": "08/20/2014 20:00",
+        "drPoints": 0,
+        "reviewCost": null,
+        "challengeFee": null,
+        "challengeStatus": "Draft",
+        "challengeCreator": "heffan",
+        "prizes": null,
+        "checkPointPrizes": null,
+        "totalPrize": 0,
+        "reliabilityBonus": 0
+      }
+    ]
+  },
+  "version": "v2"
+}

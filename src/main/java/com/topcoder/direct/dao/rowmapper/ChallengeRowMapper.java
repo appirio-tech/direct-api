@@ -1,13 +1,11 @@
 /*
- * Copyright (C) 2014 TopCoder Inc., All Rights Reserved.
+ * Copyright (C) 2014 - 2015 TopCoder Inc., All Rights Reserved.
  */
 package com.topcoder.direct.dao.rowmapper;
 
-import org.springframework.jdbc.core.RowMapper;
-
 import com.appirio.tech.core.api.v2.CMCID;
 import com.topcoder.direct.api.model.Challenge;
-import com.topcoder.direct.api.model.MemberPrize;
+import org.springframework.jdbc.core.RowMapper;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -23,7 +21,7 @@ import static com.topcoder.direct.util.Helper.isNotNullNorEmpty;
  *     This row mapper will map the query result set to a challenge object.
  * </p>
  *
- * @author Ghost_141, TCSASSEMBLER
+ * @author Ghost_141, GreatKevin
  * @version 1.1
  * @since 1.0 (TopCoder Direct API Setup and implement My Created Challenges API)
  */

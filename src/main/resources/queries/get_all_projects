@@ -1,0 +1,11 @@
+SELECT
+SKIP :first_row_index
+FIRST :page_size
+tdp.project_id, tdp.name as project_name,
+tdp.project_status_id,
+ps.name as project_status_name,
+tdp.create_date as project_created_date,
+tdp.user_id as project_creator_id,
+tdp.modify_date as project_updated_date
+FROM tc_direct_project tdp, corporate_oltp\:tc_direct_project_status_lu ps
+WHERE tdp.project_status_id = ps.project_status_id
