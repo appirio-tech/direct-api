@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014 TopCoder Inc., All Rights Reserved.
+ * Copyright (C) 2014 - 2015 TopCoder Inc., All Rights Reserved.
  */
 package com.topcoder.direct.util;
 
@@ -12,6 +12,7 @@ import org.springframework.core.io.Resource;
 import org.springframework.dao.DataAccessException;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
+import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.stereotype.Component;
 
 import java.io.BufferedReader;
@@ -26,11 +27,21 @@ import static com.topcoder.direct.util.Helper.logException;
 
 /**
  * <p>
- *     This class provide several helpful methods for reading query, executing query and get result from database.
+ *  This class provide several helpful methods for reading query, executing query and get result from database.
  * </p>
  *
- * @author Ghost_141
- * @version 1.0
+ * <p>
+ * Version 1.1 (POC Assembly - Direct API Create direct project)
+ * <ul>
+ *     <li>Added method {@link #executeCreationQuery(String, org.springframework.jdbc.core.namedparam.SqlParameterSource
+ *     , org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate)}</li>
+ *     <li>Added method {@link #getNextSequenceValue(String,
+ *     org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate)}</li>
+ * </ul>
+ * </p>
+ *
+ * @author Ghost_141, GreatKevin
+ * @version 1.1 (POC Assembly - Direct API Create direct project)
  * @since 1.0 (TopCoder Direct API Setup and implement My Created Challenges API)
  */
 @Component
@@ -46,6 +57,59 @@ public class DataAccess {
      * The value will be injected by spring.
      */
     private static String QUERY_FOLDER;
+
+    /**
+     * The SQL query template to select the next value of sequence. %s should be replaced with the sequence name.
+     *
+     * @since 1.1
+     */
+    private static String GET_SEQUENCE_TEMPLATE = "select %s.nextval from systables where tabname = 'systables'";
+
+
+    /**
+     * Executes the query to create a single new row in db.
+     *
+     * @param queryName the name of the query to get the SQL script from file
+     * @param paramSource the parameter source
+     * @param jdbcTemplate the jdbc template
+     * @return whether the new row inserted into db
+     * @throws IOException if any error occurs.
+     * @since 1.1
+     */
+    public static boolean executeCreationQuery(String queryName, SqlParameterSource paramSource,
+                                            NamedParameterJdbcTemplate jdbcTemplate
+                                           ) throws IOException {
+        logger.debug("Entrance method executeCreationQuery");
+        logger.debug(String.format("Executing creation query: %s with parameters: %s",
+                readQuery(queryName), paramSource.toString()));
+        int count = jdbcTemplate.update(readQuery(queryName), paramSource);
+        logger.debug("Exit method executeCreationQuery");
+
+        return count == 1;
+    }
+
+    /**
+     * Gets the nextval from the specified sequence. It's used for get the ID to insert to the new record.
+     *
+     * @param sequenceName the sequence name.
+     * @param jdbcTemplate the JDBC template
+     * @return the nextval of the sequence.
+     * @throws IOException if any error occurs.
+     * @since 1.1
+     */
+    public static Integer getNextSequenceValue(String sequenceName,
+                                               NamedParameterJdbcTemplate jdbcTemplate) throws IOException {
+        logger.debug("Entrance method getNextSequenceValue");
+        logger.debug(String.format("Getting next ID in sequence: %s", sequenceName));
+
+        Integer newId = jdbcTemplate.queryForObject(String.format(GET_SEQUENCE_TEMPLATE, sequenceName),
+                (SqlParameterSource) null, Integer.class);
+
+        logger.debug("Exit method getNextSequenceValue, new sequence value: " + newId);
+
+        return newId;
+    }
+
 
     /**
      * This method will execute the query by given query name and the

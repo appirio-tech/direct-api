@@ -15,7 +15,6 @@ import java.util.HashMap;
 import java.util.Map;
 
 import static org.hamcrest.Matchers.is;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -24,8 +23,15 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
  * This tests my projects rest API.
  * </p>
  *
- * @author TCSASSEMBLER
- * @version 1.0
+ * <p>
+ * Version 1.1 (POC Assembly - Direct API Create direct project)
+ * <ul>
+ *     <li>Removed unused test case on support method post</li>
+ * </ul>
+ * </p>
+ *
+ * @author GreatKevin
+ * @version 1.1
  */
 public class MyProjectsTest extends BaseDirectAPITest {
 
@@ -67,35 +73,6 @@ public class MyProjectsTest extends BaseDirectAPITest {
 
         return testsCount;
     }
-
-    /**
-     * The token is expired.
-     */
-    private static final String EXPIRED_TOKEN = "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJhZHwxMzI0NTciLCJleHA"
-            + "iOjE0MDU2NDk0NTUsImF1ZCI6IkNNYUJ1d1NuWTBWdTY4UExyV2F0dnZ1M2lJaUdQaDd0IiwiaWF0IjoxNDA1NTg5NDU1fQ.dGSEZK7N"
-            + "3mJgcmAzYgm7HRKRW1pyQpi623LTJQm_T_E";
-
-    /**
-     * The token contains invalid userId "abc".
-     */
-    private static final String INVALID_USER_ID_TOKEN = "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJhZHxhYmMiLCJ"
-            + "leHAiOm51bGwsImF1ZCI6IkNNYUJ1d1NuWTBWdTY4UExyV2F0dnZ1M2lJaUdQaDd0IiwiaWF0IjoxNDA1OTM1NDAxfQ.lzfD9wKzPFSR"
-            + "qcHHGtMeQ3YbsCuWIPo5rxdQcJD7yJA";
-
-    /**
-     * The token contains invalid userId 0.
-     */
-    private static final String ZERO_USER_ID_TOKEN = "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJhZHwwIiwiZXhwIj"
-            + "pudWxsLCJhdWQiOiJDTWFCdXdTblkwVnU2OFBMcldhdHZ2dTNpSWlHUGg3dCIsImlhdCI6MTQwNTkzNTQxMn0.IdCDq2IOXbu1Ho6Un_"
-            + "64MDmua4tcU4Z9SrP5J8sB1bs";
-
-    /**
-     * The token contains non exist userId 123.
-     */
-    private static final String NON_EXIST_USER_ID_TOKEN = "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJhZHwxMjMiL"
-            + "CJleHAiOm51bGwsImF1ZCI6IkNNYUJ1d1NuWTBWdTY4UExyV2F0dnZ1M2lJaUdQaDd0IiwiaWF0IjoxNDA1OTM1NDIwfQ.XW6p88QLrc"
-            + "AGDjrdckn8hlX4ucGCFO4wF3ClvlbKDqk";
-
 
     /**
      * The empty map of parameters used by jdbc template when updating.
@@ -156,11 +133,6 @@ public class MyProjectsTest extends BaseDirectAPITest {
         if(currentRunningCount == countTests()) {
             cleanTestData();
         }
-    }
-
-    @Test
-    public void methodNotSupported() throws Exception {
-        this.mockMvc.perform(post(BASE_URL)).andExpect(status().isMethodNotAllowed());
     }
 
     /**

@@ -33,23 +33,23 @@
 
     <jee:jndi-lookup id="tcsCatalogDS" jndi-name="java:comp/env/jdbc/tcsCatalog" resource-ref="true"/>
     <jee:jndi-lookup id="commonOltpDS" jndi-name="java:comp/env/jdbc/commonOltp" resource-ref="true"/>
+    <jee:jndi-lookup id="corporateOltpDS" jndi-name="java:comp/env/jdbc/corporateOltp" resource-ref="true"/>
 
     <bean id="txManager" class="org.springframework.transaction.jta.JtaTransactionManager">
         <property name="transactionSynchronizationRegistryName" value="java:comp/env/TransactionSynchronizationRegistry"/>
         <property name="transactionManagerName" value="java:comp/UserTransaction"/>
     </bean>
 
-    <tx:advice id="txAdvice" transaction-manager="txManager">
-        <tx:attributes>
-            <tx:method name="*"/>
-        </tx:attributes>
-    </tx:advice>
+    <tx:annotation-driven transaction-manager="txManager"/>
 
     <bean id="tcsCatalogJdbc" class="org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate">
         <constructor-arg type="javax.sql.DataSource" ref="tcsCatalogDS"/>
     </bean>
     <bean id="commonOltpJdbc" class="org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate">
         <constructor-arg type="javax.sql.DataSource" ref="commonOltpDS"/>
+    </bean>
+    <bean id="corporateOltpJdbc" class="org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate">
+        <constructor-arg type="javax.sql.DataSource" ref="corporateOltpDS"/>
     </bean>
 
 </beans>

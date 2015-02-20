@@ -1,0 +1,2 @@
+INSERT INTO tc_direct_project (project_id, name, description, project_status_id, user_id, create_date, modify_date)
+VALUES(:id.id, :projectName, :projectDescription, :projectStatusId, :projectCreatedBy, current, current)

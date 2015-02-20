@@ -44,35 +44,103 @@
               description="User database that can be updated and saved"
               factory="org.apache.catalina.users.MemoryUserDatabaseFactory"
               pathname="conf/tomcat-users.xml" />
-    <Resource
-    driverClassName="com.informix.jdbc.IfxDriver"
-    factory="org.apache.tomcat.jdbc.pool.DataSourceFactory"
-    name="jdbc/tcsCatalog"
-    password="1nf0rm1x"
-    type="javax.sql.DataSource"
-    initialSize="1"
-    url="jdbc:informix-sqli://SERVER_IP:2021/tcs_catalog:INFORMIXSERVER=informixoltp_tcp"
-    username="informix"/>
+    <!--<Resource-->
+    <!--driverClassName="com.informix.jdbc.IfxDriver"-->
+    <!--factory="org.apache.tomcat.jdbc.pool.DataSourceFactory"-->
+    <!--name="jdbc/tcsCatalog"-->
+    <!--password="1nf0rm1x"-->
+    <!--type="javax.sql.DataSource"-->
+    <!--initialSize="1"-->
+    <!--url="jdbc:informix-sqli://SERVER_IP:2021/tcs_catalog:INFORMIXSERVER=informixoltp_tcp"-->
+    <!--username="informix"/>-->
 
-    <Resource
-    driverClassName="com.informix.jdbc.IfxDriver"
-    factory="org.apache.tomcat.jdbc.pool.DataSourceFactory"
-    name="jdbc/commonOltp"
-    password="1nf0rm1x"
-    type="javax.sql.DataSource"
-    initialSize="1"
-    url="jdbc:informix-sqli://SERVER_IP:2021/common_oltp:INFORMIXSERVER=informixoltp_tcp"
-    username="informix"/>
+      <Resource name="jdbc/tcsCatalog"
+                auth="Container"
+                type="javax.sql.DataSource"
+                factory="org.objectweb.jotm.datasource.DataSourceFactory"
+                validationQuery="SELECT 1"
+                maxActive="10"
+                minIdle="1"
+                maxWait="10000"
+                initialSize="3"
+                username="informix"
+                password="1nf0rm1x"
+                driverClassName="com.informix.jdbc.IfxDriver"
+                url="jdbc:informix-sqli://SERVER_IP:2021/tcs_catalog:INFORMIXSERVER=informixoltp_tcp"/>
 
-    <Resource
-    driverClassName="com.informix.jdbc.IfxDriver"
-    factory="org.apache.tomcat.jdbc.pool.DataSourceFactory"
-    name="jdbc/timeOltp"
-    password="1nf0rm1x"
-    type="javax.sql.DataSource"
-    initialSize="1"
-    url="jdbc:informix-sqli://SERVER_IP:2021/time_oltp:INFORMIXSERVER=informixoltp_tcp"
-    username="informix"/>
+      <Resource name="jdbc/commonOltp"
+                auth="Container"
+                type="javax.sql.DataSource"
+                factory="org.objectweb.jotm.datasource.DataSourceFactory"
+                validationQuery="SELECT 1"
+                maxActive="10"
+                minIdle="1"
+                maxWait="10000"
+                initialSize="3"
+                username="informix"
+                password="1nf0rm1x"
+                driverClassName="com.informix.jdbc.IfxDriver"
+                url="jdbc:informix-sqli://SERVER_IP:2021/common_oltp:INFORMIXSERVER=informixoltp_tcp"/>
+
+
+      <Resource name="jdbc/timeOltp"
+                auth="Container"
+                type="javax.sql.DataSource"
+                factory="org.objectweb.jotm.datasource.DataSourceFactory"
+                validationQuery="SELECT 1"
+                maxActive="10"
+                minIdle="1"
+                maxWait="10000"
+                initialSize="3"
+                username="informix"
+                password="1nf0rm1x"
+                driverClassName="com.informix.jdbc.IfxDriver"
+                url="jdbc:informix-sqli://SERVER_IP:2021/time_oltp:INFORMIXSERVER=informixoltp_tcp"/>
+
+      <Resource name="jdbc/corporateOltp"
+                auth="Container"
+                type="javax.sql.DataSource"
+                factory="org.objectweb.jotm.datasource.DataSourceFactory"
+                validationQuery="SELECT 1"
+                maxActive="10"
+                minIdle="1"
+                maxWait="10000"
+                initialSize="3"
+                username="informix"
+                password="1nf0rm1x"
+                driverClassName="com.informix.jdbc.IfxDriver"
+                url="jdbc:informix-sqli://SERVER_IP:2021/corporate_oltp:INFORMIXSERVER=informixoltp_tcp"/>
+
+
+    <!--<Resource-->
+    <!--driverClassName="com.informix.jdbc.IfxDriver"-->
+    <!--factory="org.apache.tomcat.jdbc.pool.DataSourceFactory"-->
+    <!--name="jdbc/commonOltp"-->
+    <!--password="1nf0rm1x"-->
+    <!--type="javax.sql.DataSource"-->
+    <!--initialSize="1"-->
+    <!--url="jdbc:informix-sqli://SERVER_IP:2021/common_oltp:INFORMIXSERVER=informixoltp_tcp"-->
+    <!--username="informix"/>-->
+
+    <!--<Resource-->
+    <!--driverClassName="com.informix.jdbc.IfxDriver"-->
+    <!--factory="org.apache.tomcat.jdbc.pool.DataSourceFactory"-->
+    <!--name="jdbc/timeOltp"-->
+    <!--password="1nf0rm1x"-->
+    <!--type="javax.sql.DataSource"-->
+    <!--initialSize="1"-->
+    <!--url="jdbc:informix-sqli://SERVER_IP:2021/time_oltp:INFORMIXSERVER=informixoltp_tcp"-->
+    <!--username="informix"/>-->
+
+    <!--<Resource-->
+    <!--driverClassName="com.informix.jdbc.IfxDriver"-->
+    <!--factory="org.apache.tomcat.jdbc.pool.DataSourceFactory"-->
+    <!--name="jdbc/corporateOltp"-->
+    <!--password="1nf0rm1x"-->
+    <!--type="javax.sql.DataSource"-->
+    <!--initialSize="1"-->
+    <!--url="jdbc:informix-sqli://SERVER_IP:2021/corporate_oltp:INFORMIXSERVER=informixoltp_tcp"-->
+    <!--username="informix"/>-->
 
   </GlobalNamingResources>
 

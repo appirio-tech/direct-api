@@ -27,7 +27,9 @@
 
     <ResourceLink global="jdbc/timeOltp" name="jdbc/timeOltp" type="javax.sql.DataSource"/>
 
-        <Resource
+    <ResourceLink global="jdbc/corporateOltp" name="jdbc/corporateOltp" type="javax.sql.DataSource"/>
+
+    <Resource
     name="TransactionSynchronizationRegistry"
     auth="Container"
     type="javax.transaction.TransactionSynchronizationRegistry"

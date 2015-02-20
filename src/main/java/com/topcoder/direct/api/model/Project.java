@@ -14,8 +14,16 @@ import java.util.List;
 /**
  * Represents the direct project model.
  *
- * @author TCSASSEMBLER
- * @version 1.0 (TopCoder Direct API - Project Retrieval API)
+ * <p>
+ * Version 1.1 (POC Assembly - Direct API Create direct project)
+ * <ul>
+ *     <li>Added {@link #projectDescription} and its getter and setter</li>
+ * </ul>
+ * </p>
+ *
+ * @author GreatKevin
+ * @since 1.0 (TopCoder Direct API - Project Retrieval API)
+ * @version 1.1 (POC Assembly - Direct API Create direct project)
  */
 @Component
 public class Project extends AbstractIdResource {
@@ -36,6 +44,13 @@ public class Project extends AbstractIdResource {
      * The project name.
      */
     private String projectName;
+
+    /**
+     * The project description.
+     *
+     * @since 1.1
+     */
+    private String projectDescription;
 
     /**
      * The project status id.
@@ -72,7 +87,6 @@ public class Project extends AbstractIdResource {
      *
      * @return the account id.
      */
-    @JsonIgnore
     @ApiMapping(visible = false)
     public CMCID getAccountId() {
         return null;
@@ -105,6 +119,27 @@ public class Project extends AbstractIdResource {
      */
     public void setProjectName(String projectName) {
         this.projectName = projectName;
+    }
+
+    /**
+     * Gets the project description.
+     *
+     * @return the project description.
+     * @since 1.1
+     */
+    @ApiMapping(visible = false)
+    public String getProjectDescription() {
+        return projectDescription;
+    }
+
+    /**
+     * Sets the project description.
+     *
+     * @param projectDescription the project description.
+     * @since 1.1
+     */
+    public void setProjectDescription(String projectDescription) {
+        this.projectDescription = projectDescription;
     }
 
     /**

@@ -19,7 +19,6 @@ import java.util.HashMap;
 import java.util.Map;
 
 import static org.hamcrest.Matchers.is;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -45,8 +44,15 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
  * </ul>
  * </p>
  *
+ * <p>
+ * Version 1.3 (POC Assembly - Direct API Create direct project)
+ * <ul>
+ *     <li>Removed unuses test case on support method post</li>
+ * </ul>
+ * </p>
+ *
  * @author j3_guile, GreatKevin
- * @version 1.2
+ * @version 1.3
  */
 public class MyChallengesTest extends BaseDirectAPITest {
 
@@ -54,34 +60,6 @@ public class MyChallengesTest extends BaseDirectAPITest {
      * The base url of this test.
      */
     private static final String BASE_URL = "/api/v2/challenges";
-
-    /**
-     * The token is expired.
-     */
-    private static final String EXPIRED_TOKEN = "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJhZHwxMzI0NTciLCJleHA"
-        + "iOjE0MDU2NDk0NTUsImF1ZCI6IkNNYUJ1d1NuWTBWdTY4UExyV2F0dnZ1M2lJaUdQaDd0IiwiaWF0IjoxNDA1NTg5NDU1fQ.dGSEZK7N"
-        + "3mJgcmAzYgm7HRKRW1pyQpi623LTJQm_T_E";
-
-    /**
-     * The token contains invalid userId "abc".
-     */
-    private static final String INVALID_USER_ID_TOKEN = "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJhZHxhYmMiLCJ"
-        + "leHAiOm51bGwsImF1ZCI6IkNNYUJ1d1NuWTBWdTY4UExyV2F0dnZ1M2lJaUdQaDd0IiwiaWF0IjoxNDA1OTM1NDAxfQ.lzfD9wKzPFSR"
-        + "qcHHGtMeQ3YbsCuWIPo5rxdQcJD7yJA";
-
-    /**
-     * The token contains invalid userId 0.
-     */
-    private static final String ZERO_USER_ID_TOKEN = "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJhZHwwIiwiZXhwIj"
-        + "pudWxsLCJhdWQiOiJDTWFCdXdTblkwVnU2OFBMcldhdHZ2dTNpSWlHUGg3dCIsImlhdCI6MTQwNTkzNTQxMn0.IdCDq2IOXbu1Ho6Un_"
-        + "64MDmua4tcU4Z9SrP5J8sB1bs";
-
-    /**
-     * The token contains non exist userId 123.
-     */
-    private static final String NON_EXIST_USER_ID_TOKEN = "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJhZHwxMjMiL"
-        + "CJleHAiOm51bGwsImF1ZCI6IkNNYUJ1d1NuWTBWdTY4UExyV2F0dnZ1M2lJaUdQaDd0IiwiaWF0IjoxNDA1OTM1NDIwfQ.XW6p88QLrc"
-        + "AGDjrdckn8hlX4ucGCFO4wF3ClvlbKDqk";
 
     /**
      * The number of tests have been run.
@@ -197,16 +175,6 @@ public class MyChallengesTest extends BaseDirectAPITest {
         tcsCatalogJdbcTemplate.update("DELETE FROM group_associated_billing_accounts WHERE group_id = 100000", map);
         tcsCatalogJdbcTemplate.update("DELETE FROM group_member WHERE group_id = 100000", map);
         tcsCatalogJdbcTemplate.update("DELETE FROM customer_group WHERE group_id = 100000", map);
-    }
-
-    /**
-     * Test the post method is not supported.
-     *
-     * @throws Exception if any error occurred.
-     */
-    @Test
-    public void methodNotSupported() throws Exception {
-        this.mockMvc.perform(post(BASE_URL)).andExpect(status().isMethodNotAllowed());
     }
 
     /**

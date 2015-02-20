@@ -3,6 +3,7 @@
  */
 package com.topcoder.direct.dao;
 
+import com.appirio.tech.core.api.v2.dao.DaoBase;
 import com.topcoder.direct.api.model.Project;
 import com.topcoder.direct.api.model.ProjectBillingAccount;
 
@@ -15,10 +16,18 @@ import java.util.Map;
  * Defines the interface of the projects DAO that will retrieve project data from database.
  * </p>
  *
- * @author TCSASSEMBLER
- * @version 1.0 (TopCoder Direct API - Project Retrieval API)
+ * <p>
+ * Version 1.1 (POC Assembly - Direct API Create direct project)
+ * <ul>
+ *     <li>Change the interface to extends DaoBase<Project></li>
+ * </ul>
+ * </p>
+ *
+ * @author GreatKevin
+ * @since 1.0 (TopCoder Direct API - Project Retrieval API)
+ * @version 1.1 (POC Assembly - Direct API Create direct project)
  */
-public interface ProjectDAO {
+public interface ProjectDAO extends DaoBase<Project> {
     /**
      * Get my projects from database.
      *

@@ -3,6 +3,8 @@
  */
 package com.topcoder.direct.rest;
 
+import com.appirio.tech.core.api.v2.request.PostPutRequest;
+import org.codehaus.jackson.map.ObjectMapper;
 import org.json.JSONObject;
 import org.junit.Before;
 import org.junit.runner.RunWith;
@@ -11,6 +13,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.ClassPathResource;
+import org.springframework.http.MediaType;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
@@ -33,6 +36,7 @@ import java.util.Map;
 
 import static org.hamcrest.Matchers.is;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 
 
@@ -61,19 +65,66 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
  * </ul>
  * </p>
  *
- * @author Ghost_141, GreatKevin
- * @version 1.3
+ * <p>
+ * Version 1.4 (POC Assembly - Direct API Create direct project)
+ * <ul>
+ *     <li>Added {@link #MEMBER_HEFFAN_USER_ID}</li>
+ *     <li>Added {@link #createPOSTRequest(String, String, com.appirio.tech.core.api.v2.request.PostPutRequest)}</li>
+ *     <li>Added {@link #assertBadPostResponse(String, com.appirio.tech.core.api.v2.request.PostPutRequest,
+ *     org.springframework.test.web.servlet.ResultMatcher, Integer, String, String)}</li>
+ *     <li>Added {@link #createRequest(String, String, com.appirio.tech.core.api.v2.request.PostPutRequest)}</li>
+ * </ul>
+ * </p>
+ *
+ * @author Ghost_141, GreatKevin, GreatKevin
+ * @version 1.4 (POC Assembly - Direct API Create direct project)
  * @since 1.0 (TopCoder Direct API Setup and implement My Created Challenges API)
  */
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration("file:src/test/webapp/WEB-INF/direct-api-test-servlet.xml")
 @WebAppConfiguration("file:src/test/webapp/WEB-INF/web.xml")
 public abstract class BaseDirectAPITest {
+
+    /**
+     * The token is expired.
+     */
+    protected static final String EXPIRED_TOKEN = "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJhZHwxMzI0NTciLCJleHA"
+            + "iOjE0MDU2NDk0NTUsImF1ZCI6IkNNYUJ1d1NuWTBWdTY4UExyV2F0dnZ1M2lJaUdQaDd0IiwiaWF0IjoxNDA1NTg5NDU1fQ.dGSEZK7N"
+            + "3mJgcmAzYgm7HRKRW1pyQpi623LTJQm_T_E";
+
+    /**
+     * The token contains invalid userId "abc".
+     */
+    protected static final String INVALID_USER_ID_TOKEN = "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJhZHxhYmMiLCJ"
+            + "leHAiOm51bGwsImF1ZCI6IkNNYUJ1d1NuWTBWdTY4UExyV2F0dnZ1M2lJaUdQaDd0IiwiaWF0IjoxNDA1OTM1NDAxfQ.lzfD9wKzPFSR"
+            + "qcHHGtMeQ3YbsCuWIPo5rxdQcJD7yJA";
+
+    /**
+     * The token contains invalid userId 0.
+     */
+    protected static final String ZERO_USER_ID_TOKEN = "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJhZHwwIiwiZXhwIj"
+            + "pudWxsLCJhdWQiOiJDTWFCdXdTblkwVnU2OFBMcldhdHZ2dTNpSWlHUGg3dCIsImlhdCI6MTQwNTkzNTQxMn0.IdCDq2IOXbu1Ho6Un_"
+            + "64MDmua4tcU4Z9SrP5J8sB1bs";
+
+    /**
+     * The token contains non exist userId 123.
+     */
+    protected static final String NON_EXIST_USER_ID_TOKEN = "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJhZHwxMjMiL"
+            + "CJleHAiOm51bGwsImF1ZCI6IkNNYUJ1d1NuWTBWdTY4UExyV2F0dnZ1M2lJaUdQaDd0IiwiaWF0IjoxNDA1OTM1NDIwfQ.XW6p88QLrc"
+            + "AGDjrdckn8hlX4ucGCFO4wF3ClvlbKDqk";
+
     /**
      * The token for topcoder member "heffan".
      */
     @Value("${heffanToken}")
     protected String MEMBER_HEFFAN_TOKEN;
+
+    /**
+     * The user id of the member "heffan"
+     * @since 1.4
+     */
+    @Value("${heffanUserId}")
+    protected String MEMBER_HEFFAN_USER_ID;
 
     /**
      * The token for topcoder member "super".
@@ -160,6 +211,27 @@ public abstract class BaseDirectAPITest {
         return this.mockMvc.perform(requestBuilder);
     }
 
+
+    /**
+     * Create http post request.
+     * @param url The url
+     * @param token The jwt token passed to api.
+     * @param request the request object
+     * @return The http post request.
+     * @throws Exception if any error occurred.
+     * @since 1.4
+     */
+    protected ResultActions createPOSTRequest(String url, String token, PostPutRequest request) throws Exception {
+        MockHttpServletRequestBuilder postRequestBuilder = post(url);
+        if (isNotNullNorEmpty(token)) {
+            postRequestBuilder = postRequestBuilder.header("Authorization", "Bearer " + token);
+        }
+
+        postRequestBuilder.contentType(MediaType.APPLICATION_JSON).content(new ObjectMapper().writeValueAsString(request));
+
+        return this.mockMvc.perform(postRequestBuilder);
+    }
+
     /**
      * This method will read file from the classpath in test folder.
      * @param filePath - The relative path for file.
@@ -198,7 +270,6 @@ public abstract class BaseDirectAPITest {
      */
     protected void assertResponse(String expectedFilePath, ResultActions actualAPIResult) throws Exception {
         String actualResult = actualAPIResult.andReturn().getResponse().getContentAsString();
-        System.out.println(actualResult);
         JSONObject resultObj = new JSONObject(actualResult);
         JSONObject expectedResultObj = new JSONObject(readFile(expectedFilePath));
 
@@ -301,6 +372,20 @@ public abstract class BaseDirectAPITest {
     }
 
     /**
+     * Create http post request.
+     *
+     * @param url   The url
+     * @param token The jwt token passed to api.
+     * @param postRequest the post request object
+     * @return The http post request.
+     * @throws Exception if any error occurred.
+     * @since 1.4
+     */
+    protected ResultActions createRequest(String url, String token, PostPutRequest postRequest) throws Exception {
+        return this.createPOSTRequest(getBaseURL() + url, token, postRequest);
+    }
+
+    /**
      * The helper method that used to perform failure test.
      *
      * @param url            the url to call
@@ -314,6 +399,28 @@ public abstract class BaseDirectAPITest {
     protected void assertBadResponse(String url, ResultMatcher status, Integer expectedStatus, String token,
                                      String expectedErrMsg) throws Exception {
         ResultActions req = createRequest(url, token);
+        req.andExpect(status);
+        req.andExpect(jsonPath("$.result.status", is(expectedStatus)));
+        if (isNotNullNorEmpty(expectedErrMsg)) {
+            req.andExpect(jsonPath("$.result.content.message").value(expectedErrMsg));
+        }
+    }
+
+    /**
+     * The helper method that used to perform failure test for post request.
+     *
+     * @param url            the url to call
+     * @param status         the expected HTTP status.
+     * @param request the post request object
+     * @param expectedStatus the content expected status.
+     * @param token          The jwt token passed to api.
+     * @param expectedErrMsg The expected error message.
+     * @throws Exception if any error occurred.
+     * @since 1.4
+     */
+    protected void assertBadPostResponse(String url, PostPutRequest request, ResultMatcher status,
+                                         Integer expectedStatus, String token, String expectedErrMsg) throws Exception {
+        ResultActions req = createRequest(url, token, request);
         req.andExpect(status);
         req.andExpect(jsonPath("$.result.status", is(expectedStatus)));
         if (isNotNullNorEmpty(expectedErrMsg)) {

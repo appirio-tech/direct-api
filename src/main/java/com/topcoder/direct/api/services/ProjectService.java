@@ -4,6 +4,7 @@
 package com.topcoder.direct.api.services;
 
 import com.appirio.tech.core.api.v2.CMCID;
+import com.appirio.tech.core.api.v2.dao.DaoBase;
 import com.appirio.tech.core.api.v2.metadata.CountableMetadata;
 import com.appirio.tech.core.api.v2.metadata.Metadata;
 import com.appirio.tech.core.api.v2.model.annotation.ApiMapping;
@@ -14,7 +15,7 @@ import com.appirio.tech.core.api.v2.request.OrderByQuery;
 import com.appirio.tech.core.api.v2.request.QueryParameter;
 import com.appirio.tech.core.api.v2.request.SortOrder;
 import com.appirio.tech.core.api.v2.service.AbstractMetadataService;
-import com.appirio.tech.core.api.v2.service.RESTQueryService;
+import com.appirio.tech.core.api.v2.service.RESTPersistentService;
 import com.topcoder.direct.api.model.Project;
 import com.topcoder.direct.api.model.ProjectBillingAccount;
 import com.topcoder.direct.api.security.AccessLevel;
@@ -23,6 +24,7 @@ import com.topcoder.direct.api.security.SecurityUtil;
 import com.topcoder.direct.dao.ProjectDAO;
 import com.topcoder.direct.exception.BadRequestException;
 import com.topcoder.direct.exception.ServerInternalException;
+import com.topcoder.direct.util.Helper;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -43,11 +45,23 @@ import static com.topcoder.direct.util.ServiceHelper.populateLimitQuery;
 /**
  * This is the service implementation for the My Projects API.
  *
- * @author TCSASSEMBLER
- * @version 1.0 (TopCoder Direct API - Project Retrieval API)
+ * <p>
+ * Version 1.1 (POC Assembly - Direct API Create direct project)
+ * <ul>
+ *     <li>Change the this class <code>ProjectService</code> to implement RESTPersistentService<Project> instead</li>
+ *     <li>Added {@link #handlePost(javax.servlet.http.HttpServletRequest, com.topcoder.direct.api.model.Project)}</li>
+ *     <li>Added {@link #handleDelete(javax.servlet.http.HttpServletRequest, com.appirio.tech.core.api.v2.CMCID)}</li>
+ *     <li>Added {@link #handlePut(javax.servlet.http.HttpServletRequest, com.topcoder.direct.api.model.Project)}</li>
+ *     <li>Added {@link #getResourceDao()}</li>
+ * </ul>
+ * </p>
+ *
+ * @author GreatKevin
+ * @since 1.0 (TopCoder Direct API - Project Retrieval API)
+ * @version 1.1 (POC Assembly - Direct API Create direct project)
  */
 @Service
-public class ProjectService extends AbstractMetadataService implements RESTQueryService<Project> {
+public class ProjectService extends AbstractMetadataService implements RESTPersistentService<Project> {
 
     /**
      * Logger instance.
@@ -97,6 +111,13 @@ public class ProjectService extends AbstractMetadataService implements RESTQuery
     private static final String DEFAULT_SORT_FIELD = "projectId";
 
     /**
+     * The default project status id for the newly created project.
+     *
+     * @since 1.1
+     */
+    private static final Integer DEFAULT_NEW_PROJECT_STATUS_ID = 1;
+
+    /**
      * Allowed scope values for my projects api when user is admin.
      */
     private static final List<String> ALLOWED_SCOPE = Arrays.asList("all", "my");
@@ -128,7 +149,7 @@ public class ProjectService extends AbstractMetadataService implements RESTQuery
      * @param query              the filter and output specification
      * @return the challenge data requested, may be empty, never null
      * @throws BadRequestException     for any validation failure in the request data
-     * @throws UnauthorizedException   if the request principal is not logged in as a member or admin roles
+     * @throws com.topcoder.direct.exception.UnauthorizedException   if the request principal is not logged in as a member or admin roles
      * @throws ServerInternalException for IOExceptions caught from the DAO
      *                                 Note: all RuntimeExceptions are propagated to the framework exception handlers.
      */
@@ -502,6 +523,86 @@ public class ProjectService extends AbstractMetadataService implements RESTQuery
         }
 
         return metadata;
+    }
+
+    /**
+     * Implementation of RESTPersistentService<Project>.handlePost to handle the post request for the resource project.
+     *
+     *
+     * @param httpServletRequest the HttpServletRequest
+     * @param project the project resource object
+     * @return the newly created <code>CMCID</code> of project
+     * @throws Exception if any error occurs.
+     * @since 1.1
+     */
+    @Override
+    public CMCID handlePost(HttpServletRequest httpServletRequest, Project project) throws Exception {
+        DirectAuthenticationToken identity = SecurityUtil.getAuthentication(httpServletRequest);
+        identity.authorize(AccessLevel.ADMIN);
+
+        // do the validation
+        if (Helper.isNull(project)) {
+            throw new BadRequestException("The project to create is null");
+        }
+        if (!Helper.isNotNullNorEmpty(project.getProjectName())) {
+            throw new BadRequestException("The project name should not be empty");
+        }
+        if (!Helper.isNotNullNorEmpty(project.getProjectDescription())) {
+            throw new BadRequestException("The project description should not be empty");
+        }
+        if (project.getProjectName().length() > 200) {
+            throw new BadRequestException("The project name length should not exceed 200 chars");
+        }
+        if (project.getProjectDescription().length() > 10000) {
+            throw new BadRequestException("The project description length should not exceed 10000 chars");
+        }
+
+        // populate other parts of the project
+        project.setProjectCreatedBy(identity.getUserId());
+        project.setProjectStatusId(DEFAULT_NEW_PROJECT_STATUS_ID);
+
+        CMCID newId = getResourceDao().insert(project);
+
+        return newId;
+    }
+
+    /**
+     * Handles the put request, not implemented now.
+     *
+     * @param httpServletRequest the HttpServletRequest
+     * @param project the project resource object
+     * @return id of the updated project resource
+     * @throws Exception if any error occurs.
+     * @since 1.1
+     */
+    @Override
+    public CMCID handlePut(HttpServletRequest httpServletRequest, Project project) throws Exception {
+        throw new UnsupportedOperationException("not implemented");
+
+    }
+
+    /**
+     * Handles the delete request, not implemented now.
+     *
+     * @param httpServletRequest the HttpServletRequest
+     * @param cmcid the id of the project resource to delete
+     * @throws Exception if any error occurs.
+     * @since 1.1
+     */
+    @Override
+    public void handleDelete(HttpServletRequest httpServletRequest, CMCID cmcid) throws Exception {
+        throw new UnsupportedOperationException("not implemented");
+    }
+
+    /**
+     * Gets the project resource DAO.
+     *
+     * @return the project resource DAO.
+     * @since 1.1
+     */
+    @Override
+    public DaoBase<Project> getResourceDao() {
+        return projectDAO;
     }
 
     /**
