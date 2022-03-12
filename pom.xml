@@ -12,7 +12,7 @@
     <properties>
         <spring.version>3.2.9.RELEASE</spring.version>
         <spring-security.version>3.2.4.RELEASE</spring-security.version>
-        <jackson.version>2.3.2</jackson.version>
+        <jackson.version>2.13.0</jackson.version>
     </properties>
 
     <dependencies>
@@ -112,7 +112,7 @@
         <dependency>
             <groupId>com.auth0</groupId>
             <artifactId>java-jwt</artifactId>
-            <version>0.2</version>
+            <version>0.5</version>
         </dependency>
         <dependency>
             <groupId>commons-dbcp</groupId>
